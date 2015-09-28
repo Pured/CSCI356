@@ -34,6 +34,11 @@ bool DemoApp::setup(void)
 {
 	BaseApplication::setup();
 
+	//set initial mouse position
+	OIS::MouseState &mutableMouseState = const_cast<OIS::MouseState &>(mMouse->getMouseState());
+	mutableMouseState.X.abs = mCamera->getViewport()->getActualWidth() / 2;
+	mutableMouseState.Y.abs = mCamera->getViewport()->getActualHeight() / 2;
+
 	mTrayMgr->showCursor();
 
 	pathFindingGraph = new Graph;
@@ -48,8 +53,8 @@ bool DemoApp::setup(void)
 //-------------------------------------------------------------------------------------
 void DemoApp::createScene(void)
 {
-	//mCamera->setPosition(Ogre::Vector3(0, 90, 100));
-	//mCamera->lookAt(Ogre::Vector3(0, 0, 10));
+	mCamera->setPosition(Ogre::Vector3(0, 90, 100));
+	mCamera->lookAt(Ogre::Vector3(0, 0, 10));
 
 	mCamera->setOrientation(Ogre::Quaternion());
 	camNode=mSceneMgr->getRootSceneNode()->createChildSceneNode("Camera");
@@ -73,6 +78,7 @@ void DemoApp::createScene(void)
 	mapSetup();
 
 	mWindow->setFullscreen(false,1280,720);
+	mWindow->reposition(150, 50);
 }
 bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
