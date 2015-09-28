@@ -14,6 +14,7 @@ This source file is part of the
 	  http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
+#include "stdafx.h"
 #include "BaseApplication.h"
  
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
@@ -163,7 +164,7 @@ void BaseApplication::destroyScene(void)
 void BaseApplication::createViewports(void)
 {
 	// Create one viewport, entire window
-	vp= mWindow->addViewport(mCamera);
+	vp = mWindow->addViewport(mCamera);
 	vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
  
 	// Alter the camera aspect ratio to match the viewport

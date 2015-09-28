@@ -50,4 +50,7 @@
 #  include "OgreStaticPluginLoader.h"
 #endif
 
+// Bullet Physics header files
+#include <btBulletDynamicsCommon.h>
+
 #endif

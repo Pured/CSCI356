@@ -1,13 +1,17 @@
+#include "stdafx.h"
 #include "DemoApp.h"
 //-------------------------------------------------------------------------------------
 DemoApp::DemoApp(void)
 {
-	currentNode=-1;
+	for(int i=0;i<TANK_LIMIT;i++)
+		currentNode[i]=-1;
 	camX=0;
 	camY=0;
 	camZ=45;
 	cMode=0;
 	lookAtDest=(0,0,0);
+	srand(time(NULL));
+	selectionMode=0;
 }
 //-------------------------------------------------------------------------------------
 DemoApp::~DemoApp(void)
@@ -23,7 +27,8 @@ bool DemoApp::setup(void)
 	mTrayMgr->showCursor();
 
 	pathFindingGraph = new Graph;
-	mCurrentState = 0;
+	for(int i=0;i<TANK_LIMIT;i++)
+		mCurrentState[i] = 0;
 
 	mDirection = Ogre::Vector3::ZERO;
 
@@ -81,7 +86,7 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
  void DemoApp::createFrameListener(void)
 {
 	BaseApplication::createFrameListener();
-	tB = mTrayMgr->createTextBox(OgreBites::TL_TOPRIGHT, "InfoPanel", "Information", 500, 200);
+	tB = mTrayMgr->createTextBox(OgreBites::TL_TOPRIGHT, "InfoPanel", "Information", 500, 400);
 
 }
 // OIS::KeyListener

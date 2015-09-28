@@ -2,7 +2,7 @@
 #define __Graph_h_
 
 #include <math.h>
-
+#include"stdafx.h"
 #include "OgreRoot.h"
 #include "connection.h"
 

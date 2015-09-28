@@ -1,3 +1,4 @@
+#include"stdafx.h"
 #include "NodeRecord.h"
 
 NodeRecord::NodeRecord()

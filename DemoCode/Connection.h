@@ -1,6 +1,6 @@
 #ifndef __Connection_h_
 #define __Connection_h_
-
+#include"stdafx.h"
 class Connection
 {
 private:

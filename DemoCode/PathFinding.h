@@ -1,6 +1,6 @@
 #ifndef __PathFinding_h_
 #define __PathFinding_h_
-
+#include"stdafx.h"
 #include <vector>
 #include <algorithm>
 

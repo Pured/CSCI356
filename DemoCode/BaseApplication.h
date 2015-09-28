@@ -16,9 +16,9 @@ This source file is part of the
 */
 #ifndef __BaseApplication_h_
 #define __BaseApplication_h_
- 
-#include "stdafx.h"
 
+#include "stdafx.h"
+ 
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
 public:
@@ -59,6 +59,8 @@ protected:
 	Ogre::String mResourcesCfg;
 	Ogre::String mPluginsCfg;
 
+	Ogre::Viewport* vp;
+
 	Ogre::OverlaySystem *mOverlaySystem;
  
 	// OgreBites
@@ -76,7 +78,6 @@ protected:
  
 	// Added for Mac compatibility
 	Ogre::String                 m_ResourcePath;
-	Ogre::Viewport* vp;
  
 #ifdef OGRE_STATIC_LIB
 	Ogre::StaticPluginLoader m_StaticPluginLoader;

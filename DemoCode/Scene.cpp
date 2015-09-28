@@ -1,3 +1,4 @@
+#include"stdafx.h"
 #include "DemoApp.h"
 
 void DemoApp::mapSetup()
@@ -42,28 +43,32 @@ void DemoApp::mapSetup()
 	}
 
 	// create the path objects, and clear them to start off
-	path1 = mSceneMgr->createManualObject("DijkstraPath");
-	path1->clear();
-	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path1);
+	//path1 = mSceneMgr->createManualObject("DijkstraPath");
+	//path1->clear();
+	//mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path1);
+	for(int i=0;i<TANK_LIMIT;i++)
+	{
+		path2[i] = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
+		path2[i]->clear();
+		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path2[i]);
+	}
+	for(int i=0; i<TANK_LIMIT; i++)
+	{
+		/*Tank Stuff*/
+		std::string entityName = "Tank"+std::to_string(i);
 
-	path2 = mSceneMgr->createManualObject("AStarPath");
-	path2->clear();
-	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path2);
+		// Create entity
+		Ogre::Entity* cube = mSceneMgr->createEntity(entityName, "cube.mesh");
+		//cube->setMaterialName("Examples/BumpyMetal");
 
-	/*Tank Stuff*/
-	std::string entityName = "Tank";
-
-	// Create entity
-	Ogre::Entity* cube = mSceneMgr->createEntity(entityName, "cube.mesh");
-	//cube->setMaterialName("Examples/BumpyMetal");
-
-	// Attach entity to scene node
-	tankNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	tankNode->attachObject(cube);
-	tankNode->scale(0.1, 0.01, 0.1);
+		// Attach entity to scene node
+		tankNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+		tankNode[i]->attachObject(cube);
+		tankNode[i]->scale(0.1, 0.01, 0.1);
 			
-	// Place object at appropriate position
-	Ogre::Vector3 position = pathFindingGraph->getPosition(0);
-	position.y = 0.7;
-	tankNode->translate(position);
+		// Place object at appropriate position
+		Ogre::Vector3 position = pathFindingGraph->getPosition((i*16));
+		position.y = 0.7;
+		tankNode[i]->translate(position);
+	}
 }

@@ -1,3 +1,4 @@
+#include"stdafx.h"
 #include "Graph.h"
 
 /*int	Graph::mGrid[TOTAL_NODES] = {

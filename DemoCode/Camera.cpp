@@ -1,3 +1,4 @@
+#include"stdafx.h"
 #include "DemoApp.h"
 void DemoApp::camMovement( const OIS::MouseEvent &arg )
 {
@@ -47,87 +48,102 @@ void DemoApp::camPressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 	{
 		case OIS::MB_Left:
 			{
-				// if path already exists
-				if(mCurrentState > 1)
+				tB->setText("LEFT MOUSE CLICKED \n");
+				for(int i=0;i<TANK_LIMIT;i++)
 				{
-					// reset
-					mCurrentState = 0;
-					path1->clear();
-					path2->clear();
-				}
-				// if no path yet
-				else
-				{
-					// Create RaySceneQuery
-					Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(
-						static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width, 
-						static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
-
-					Ogre::RaySceneQuery * mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
-
-					// Set ray
-					mRaySceneQuery->setRay(mouseRay);
-
-					// Ray-cast and get first hit
-					Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
-					Ogre::RaySceneQueryResult::iterator itr = result.begin();
-
-					// if hit an object
-					if(itr != result.end())
+					tB->appendText("START OF FOR : "+std::to_string(i)+"\n");
+					// if path already exists
+					if(mCurrentState[i] > 1)
 					{
-						// Get hit location
-						Ogre::Vector3 location = mouseRay.getPoint(itr->distance);
+						// reset
+						mCurrentState[i] = 0;
+						//path1->clear();
+						path2[i]->clear();
+					}
+					// if no path yet
+					else
+					{
+						// Create RaySceneQuery
+						Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
-						// if hit the floor
-						if(location.y < 0.001)
+						Ogre::RaySceneQuery * mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
+
+						// Set ray
+						mRaySceneQuery->setRay(mouseRay);
+
+						// Ray-cast and get first hit
+						Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
+						Ogre::RaySceneQueryResult::iterator itr = result.begin();
+
+						// if hit an object
+						if((itr != result.end() && selectionMode==1) || selectionMode==0)
 						{
-							// if no start node yet
-							mCurrentState=1;
-							if(mCurrentState == 0)
-							{
-								// set start node
-								startNode = pathFindingGraph->getNode(tankNode->_getDerivedPosition());
-								// set state to goal node state
-								mCurrentState++;
-							}
-							// if start node already assigned
-							else if(mCurrentState == 1)
-							{
-								startNode = pathFindingGraph->getNode(tankNode->_getDerivedPosition());
-								// set goal node
-								goalNode = pathFindingGraph->getNode(location);
+							//Get hit location
+							Ogre::Vector3 location = mouseRay.getPoint(itr->distance);
 
-								// check that goal node is not the same as start node
-								if(goalNode != startNode)
+							// if hit the floor
+							if((location.y < 0.001 && selectionMode==1) || selectionMode==0)
+							{
+								// if no start node yet
+								mCurrentState[i]=1;
+								if(mCurrentState[i] == 0)
 								{
-									// try to find path from start to goal node
-									std::vector<int> path;
-
-									// if path exists
-									//if(mPathFinder.Dijkstra(startNode, goalNode, *pathFindingGraph, path))
-									if(mPathFinder.AStar(startNode, goalNode, *pathFindingGraph, path))
+									// set start node
+									startNode[i] = pathFindingGraph->getNode(tankNode[i]->_getDerivedPosition());
+									// set state to goal node state
+									mCurrentState[i]++;
+								}
+								// if start node already assigned
+								else if(mCurrentState[i] == 1)
+								{
+									startNode[i] = pathFindingGraph->getNode(tankNode[i]->_getDerivedPosition());
+									// set goal node
+									if(selectionMode==0)
 									{
-										// draw path
-										//createPath(path1, 0.5, path, Ogre::ColourValue(1, 0, 0));
-						
-										//mPathFinder.AStar(startNode, goalNode, *pathFindingGraph, path);
-										createPath(path2, 1.0, path, Ogre::ColourValue(0, 0, 1));
-
-										// set state to path found
-										mCurrentState++;
-
-										//WIP TANK
-										//std::copy(path.begin(), path.end(), tankPath.begin());
-										for (std::vector<int>::iterator it = path.begin(); it!=path.end(); ++it)
+										do
 										{
-											tankPath.push_back(*it);
-										}
-										currentNode=0;
+											goalNode[i] = (int)rand()%256;
+										}while(pathFindingGraph->getContent(goalNode[i])!=0);
 									}
 									else
 									{
-										// no path so set state to no start node
-										mCurrentState = 0;
+										goalNode[i]=pathFindingGraph->getNode(location);
+									}
+									//tB->appendText("GOAL NODE: "+std::to_string(goalNode[i])+" \n");
+									//tB->appendText("START NODE: "+std::to_string(startNode[i])+" \n");
+									// check that goal node is not the same as start node
+									if(goalNode[i] != startNode[i])
+									{
+										// try to find path from start to goal node
+										std::vector<int> path;
+
+										// if path exists
+										//if(mPathFinder.Dijkstra(startNode, goalNode, *pathFindingGraph, path))
+										if(mPathFinder.AStar(startNode[i], goalNode[i], *pathFindingGraph, path))
+										{
+											// draw path
+											//createPath(path1, 0.5, path, Ogre::ColourValue(1, 0, 0));
+						
+											//mPathFinder.AStar(startNode, goalNode, *pathFindingGraph, path);
+											createPath(path2[i], 1.0, path, Ogre::ColourValue(0, 0, 1));
+
+											// set state to path found
+											mCurrentState[i]++;
+
+											//WIP TANK
+											//std::copy(path.begin(), path.end(), tankPath.begin());
+											for (std::vector<int>::iterator it = path.begin(); it!=path.end(); ++it)
+											{
+												tankPath[i].push_back(*it);
+											}
+											currentNode[i]=0;
+										}
+										else
+										{
+											tB->appendText("COULD NOT FIND PATH \n");
+											// no path so set state to no start node
+											mCurrentState[i] = 0;
+										}
 									}
 								}
 							}
@@ -164,8 +180,12 @@ void DemoApp::camInput( const OIS::KeyEvent &arg )
 			
 			//mCamera->setOrientation(Ogre::Quaternion());
 			camNode->setOrientation(Ogre::Quaternion());
-
-
+			break;
+		case OIS::KC_F:
+				if(selectionMode==0)
+					selectionMode=1;
+				else if(selectionMode==1)
+					selectionMode=0;
 			break;
 		default:
 			break;
@@ -175,10 +195,10 @@ void DemoApp::camInput( const OIS::KeyEvent &arg )
 void DemoApp::frameRenderingCamera()
 {
 	Ogre::Vector3 camPos;
-	if(cMode==0)
+	/*if(cMode==0)
 		tB->setText("CMODE: "+std::to_string(cMode)+"\n");
 	else if(cMode==1)
-		tB->setText("CMODE: "+std::to_string(cMode)+"\n");
+		tB->setText("CMODE: "+std::to_string(cMode)+"\n");*/
 	if(cMode==0)
 	{
 
@@ -226,8 +246,8 @@ void DemoApp::frameRenderingCamera()
 		//camNode->setOrientation(Ogre::Quaternion(0,0,0,1));
 	}
 
-	tB->appendText("Look At Dest: ("+std::to_string(lookAtDest.x)+")-("+std::to_string(lookAtDest.y)+")-("+std::to_string(lookAtDest.z)+")\n");
-	tB->appendText("Cam Pos Dest: ("+std::to_string(camPos.x)+")-("+std::to_string(camPos.y)+")-("+std::to_string(camPos.z)+")\n");
+	//tB->appendText("Look At Dest: ("+std::to_string(lookAtDest.x)+")-("+std::to_string(lookAtDest.y)+")-("+std::to_string(lookAtDest.z)+")\n");
+	//tB->appendText("Cam Pos Dest: ("+std::to_string(camPos.x)+")-("+std::to_string(camPos.y)+")-("+std::to_string(camPos.z)+")\n");
 	//R=camZ*(M_PI/(double)180);
 	//mCamera->setFOVy(R);
 	if(cMode==1)

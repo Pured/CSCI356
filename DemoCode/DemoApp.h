@@ -4,7 +4,10 @@
 #include "BaseApplication.h"
 #include "PathFinding.h"
 #include<math.h>
+#include "PhysicsEngine.h"
+#include"stdafx.h"
 #define M_PI           3.14159265358979323846  /* pi */
+#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
 class DemoApp : public BaseApplication
 {
 public:
@@ -47,6 +50,7 @@ private:
 	Ogre::SceneNode* camNode;
 	int cMode;
 	Ogre::Vector3 lookAtDest;
+	int selectionMode;
 
 	//Camera Functions//
 	void frameRenderingCamera();
@@ -57,19 +61,19 @@ private:
 
 	//TankMovementAI Variables//
 	//Lab Variables
-	int mCurrentState;
-	int startNode;
-	int goalNode;
+	int mCurrentState[TANK_LIMIT];
+	int startNode[TANK_LIMIT];
+	int goalNode[TANK_LIMIT];
 
 	Graph* pathFindingGraph;
 	PathFinding mPathFinder;
-	Ogre::ManualObject* path1;
-	Ogre::ManualObject* path2;
+	//Ogre::ManualObject* path1;
+	Ogre::ManualObject* path2[TANK_LIMIT];
 
 	//Assignment Variables
-	Ogre::SceneNode* tankNode;
-	std::vector<int> tankPath;
-	int currentNode;
+	Ogre::SceneNode* tankNode[TANK_LIMIT];
+	std::vector<int> tankPath[TANK_LIMIT];
+	int currentNode[TANK_LIMIT];
 
 	//TankMovementAI Functions//
 	void tankMovement();

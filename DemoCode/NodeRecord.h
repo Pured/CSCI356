@@ -1,6 +1,6 @@
 #ifndef __NodeRecord_h_
 #define __NodeRecord_h_
-
+#include"stdafx.h"
 class NodeRecord
 {
 private:
