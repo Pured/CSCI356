@@ -26,6 +26,7 @@ protected:
     // OIS::MouseListener
     virtual bool mouseMoved( const OIS::MouseEvent &arg );
     virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+	virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
  
 	Ogre::Real mRotate;          // The rotate constant
 	Ogre::Real mMove;            // The movement constant
@@ -51,6 +52,8 @@ private:
 	int cMode;
 	Ogre::Vector3 lookAtDest;
 	int selectionMode;
+	Ogre::Degree mRotationX;
+	Ogre::Degree mRotationY;
 
 	//Camera Functions//
 	void frameRenderingCamera();
@@ -58,26 +61,54 @@ private:
 	void camMovement( const OIS::MouseEvent & );
 	void camPressed( const OIS::MouseEvent &, OIS::MouseButtonID  );
 	bool DemoApp::WithinBounds(Ogre::Vector3 , Ogre::Vector3 );
+	bool DemoApp::camMouseReleased( const OIS::MouseEvent &, OIS::MouseButtonID );
+
+	//Selection Box Variables
+	Ogre::Vector2 pos1;
+	Ogre::Vector2 pos2;
+	bool mSelecting;
+	Ogre::ManualObject* mSelectionBox;
+	int boxTimeout;
+	bool controlPressed;
+	bool mousePressedVar;
+	bool nextClickPath;
+
+	//SelectionBox Functions
+	bool DemoApp::selectionBox();
+	Ogre::ManualObject* DemoApp::createSelectionBox(Ogre::String );
+	Ogre::Vector2 DemoApp::worldToScreenPosition(const Ogre::Vector3&);
+	Ogre::Vector2 DemoApp::GetScreenspaceCoords(const Ogre::Vector3& , const Ogre::Camera& );
+	bool DemoApp::quickSelect();
 
 	//TankMovementAI Variables//
 	//Lab Variables
 	int mCurrentState[TANK_LIMIT];
 	int startNode[TANK_LIMIT];
 	int goalNode[TANK_LIMIT];
+	bool selected[TANK_LIMIT];
 
 	Graph* pathFindingGraph;
 	PathFinding mPathFinder;
-	//Ogre::ManualObject* path1;
 	Ogre::ManualObject* path2[TANK_LIMIT];
 
 	//Assignment Variables
 	Ogre::SceneNode* tankNode[TANK_LIMIT];
 	std::vector<int> tankPath[TANK_LIMIT];
 	int currentNode[TANK_LIMIT];
+	Ogre::Real mRotProgress[TANK_LIMIT]; 
+	bool firstTime[TANK_LIMIT];
+	Ogre::Quaternion orientDest[TANK_LIMIT];
 
 	//TankMovementAI Functions//
-	void tankMovement();
+	void tankMovement(const Ogre::FrameEvent&);
 	void createPath(Ogre::ManualObject* line, float height, std::vector<int>& path, Ogre::ColourValue& colour);
+	void DemoApp::generatePath();
+
+	//Selection BillBoard variables
+	Ogre::BillboardSet* mHealthBar[TANK_LIMIT];
+	Ogre::Billboard* mHealthBarBB;
+	Ogre::BillboardSet* mSelectionCircle[TANK_LIMIT];
+	Ogre::Billboard* mSelectionCircleBB;
 };
  
 #endif // #ifndef __DemoApp_h_

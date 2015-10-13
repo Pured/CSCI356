@@ -8,7 +8,7 @@
 
 #define GRID_DIMENSION 16	// 10 x 10 grid
 #define TOTAL_NODES 256
-#define SQUARE_SIZE 16
+#define SQUARE_SIZE 10
 
 class Graph
 {

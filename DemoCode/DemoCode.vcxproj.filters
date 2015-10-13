@@ -25,6 +25,9 @@
     <Filter Include="Source Files\Kody">
       <UniqueIdentifier>{2bf51807-adf4-46b6-8903-d62ca0cfb0d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scripts">
+      <UniqueIdentifier>{bf8792d3-58f3-4371-a883-5bfa3ba90565}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ogre.cfg">
@@ -41,6 +44,9 @@
     </None>
     <None Include="resources_d.cfg">
       <Filter>Configuration Files</Filter>
+    </None>
+    <None Include="Models\myMaterial.material">
+      <Filter>Source Files\Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

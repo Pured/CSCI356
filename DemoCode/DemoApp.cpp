@@ -11,7 +11,17 @@ DemoApp::DemoApp(void)
 	cMode=0;
 	lookAtDest=(0,0,0);
 	srand(time(NULL));
-	selectionMode=0;
+	selectionMode=1;
+	for(int i=0;i<TANK_LIMIT;i++)
+		selected[i]=false;
+	for(int i=0;i<TANK_LIMIT;i++)
+		firstTime[i]=true;
+	for(int i=0;i<TANK_LIMIT;i++)
+		mRotProgress[i]=0;
+	boxTimeout=0;
+	controlPressed=false;
+	mousePressedVar=false;
+	nextClickPath=false;
 }
 //-------------------------------------------------------------------------------------
 DemoApp::~DemoApp(void)
@@ -75,7 +85,7 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	//Need to capture/update each device
 	mKeyboard->capture();
 	mMouse->capture();
-	tankMovement();
+	tankMovement(evt);
 	frameRenderingCamera();
 
 
@@ -104,12 +114,16 @@ bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 		case OIS::KC_LMENU: 
 			cMode=0;
 			lookAtDest=(0,0,0);
+			mTrayMgr->showCursor();
 			//camNode->setOrientation(Ogre::Quaternion());
 			//mCamera->setOrientation(Ogre::Quaternion());
 			//camNode->setOrientation(mCamera->getOrientation());
 			//camNode->setPosition(mCamera->getPosition());
 			//mCamera->setPosition(camNode->getPosition());
 			//camNode->attachObject(mCamera);
+			break;
+		case::OIS::KC_LCONTROL:
+			controlPressed=false;
 			break;
 	}
 	return true;
@@ -128,6 +142,14 @@ bool DemoApp::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 	if (mTrayMgr->injectMouseDown(arg, id)) return true;
 
 	camPressed(arg,id);
+
+	return true;
+}
+bool DemoApp::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+{
+	if (mTrayMgr->injectMouseDown(arg, id)) return true;
+
+	camMouseReleased(arg,id);
 
 	return true;
 }
