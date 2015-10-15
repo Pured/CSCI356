@@ -56,9 +56,12 @@ void DemoApp::mapSetup()
 	//mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path1);
 	for(int i=0;i<TANK_LIMIT;i++)
 	{
-		path2[i] = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
-		path2[i]->clear();
-		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path2[i]);
+		tank tmp;
+		
+		tmp.path2 = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
+		tmp.path2->clear();
+		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(tmp.path2);
+		tanks.push_back(tmp);
 	}
 	for(int i=0; i<TANK_LIMIT; i++)
 	{
@@ -70,8 +73,8 @@ void DemoApp::mapSetup()
 		//cube->setMaterialName("Examples/BumpyMetal");
 
 		// Attach entity to scene node
-		tankNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-		Ogre::SceneNode * rePos=tankNode[i]->createChildSceneNode();
+		tanks.at(i).tankNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+		Ogre::SceneNode * rePos=tanks.at(i).tankNode->createChildSceneNode();
 		rePos->yaw(Ogre::Degree(180));
 		rePos->attachObject(fish);
 		//tankNode[i]->scale(0.1, 0.01, 0.1);
@@ -79,7 +82,7 @@ void DemoApp::mapSetup()
 		// Place object at appropriate position
 		Ogre::Vector3 position = pathFindingGraph->getPosition((i*16));
 		position.y = 0.7;
-		tankNode[i]->translate(position);
+		tanks.at(i).tankNode->translate(position);
 		
 	}
 	for(int i=0;i<TANK_LIMIT;i++)

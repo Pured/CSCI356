@@ -61,12 +61,13 @@ bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 				}
 				if(boxTimeout<6)
 				{
-					if(quickSelect()==false)
+					//if(quickSelect()==false)
+					quickSelect();
 						nextClickPath=false;
-					else
-						nextClickPath=true;
+					//else
+					//	nextClickPath=true;
 				}
-				else
+				/*else
 				{
 					if(nextClickPath==true)
 					{
@@ -74,7 +75,7 @@ bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 					}
 					else
 						nextClickPath=true;
-				}
+				}*/
 				boxTimeout=0;
 				mousePressedVar=false;
 			}
@@ -101,6 +102,7 @@ bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 bool DemoApp::quickSelect()
 {
 	tB->setText("In QUICK SELECTED \n");
+	tB->appendText("Selection Mode: "+std::to_string(selectionMode)+"\n");
 	// Create RaySceneQuery
 	Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
@@ -133,28 +135,28 @@ bool DemoApp::quickSelect()
 			name = itr->movable->getName();
 		}
 
-		for(int i=0;i<TANK_LIMIT;i++)
+		for(int i=1;i<TANK_LIMIT;i++)
 		{
 			tB->appendText("RAY NAME: "+name+"\n");
 			if(name=="Tank"+std::to_string(i))
 			{
 				tB->appendText("TANK QUICKSELECTED: "+std::to_string(i)+"\n");
-				selected[i]=true;
-				if(mSelectionCircle[i]->getParentSceneNode()!=tankNode[i])
-					tankNode[i]->attachObject(mSelectionCircle[i]);
-				if(mHealthBar[i]->getParentSceneNode()!=tankNode[i])
-					tankNode[i]->attachObject(mHealthBar[i]);
+				tanks.at(i).selected=true;
+				if(mSelectionCircle[i]->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(mSelectionCircle[i]);
+				if(mHealthBar[i]->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(mHealthBar[i]);
 				found=true;
-				path2[i]->setVisible(true);
+				tanks.at(i).path2->setVisible(true);
 			}
 			else if(controlPressed==false)
 			{
-				selected[i]=false;
-				if(mSelectionCircle[i]->getParentSceneNode()==tankNode[i])
-					tankNode[i]->detachObject(mSelectionCircle[i]);
-				if(mHealthBar[i]->getParentSceneNode()==tankNode[i])
-					tankNode[i]->detachObject(mHealthBar[i]);
-				path2[i]->setVisible(false);
+				tanks.at(i).selected=false;
+				if(mSelectionCircle[i]->getParentSceneNode()==tanks.at(i).tankNode)
+					tanks.at(i).tankNode->detachObject(mSelectionCircle[i]);
+				if(mHealthBar[i]->getParentSceneNode()==tanks.at(i).tankNode)
+					tanks.at(i).tankNode->detachObject(mHealthBar[i]);
+				tanks.at(i).path2->setVisible(false);
 			}
 		}
 		if(found==false)
@@ -170,17 +172,18 @@ void DemoApp::generatePath()
 	{
 		//tB->appendText("START OF FOR : "+std::to_string(i)+"\n");
 		// if path already exists
-		if(mCurrentState[i] > 1)
+		if(tanks.at(i).mCurrentState > 1)
 		{
 			// reset
-			mCurrentState[i] = 0;
+			tanks.at(i).mCurrentState = 0;
 			//path1->clear();
-			path2[i]->clear();
+			tanks.at(i).path2->clear();
 		}
 		// if no path yet
-		else if(selected[i]==true)
+		else if(tanks.at(i).selected==true)
 		{
 			tB->appendText("TANK SELECTED: "+std::to_string(i)+"\n");
+			tB->appendText("Selection Mode: "+std::to_string(selectionMode)+"\n");
 			// Create RaySceneQuery
 			Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
@@ -204,70 +207,76 @@ void DemoApp::generatePath()
 				if((location.y < 0.001 && selectionMode==1) || selectionMode==0)
 				{
 					// if no start node yet
-					mCurrentState[i]=1;
+					tanks.at(i).mCurrentState=1;
 					//Start node is always the current position of the object
 					//if(mCurrentState[i] == 1)
 					{
-						startNode[i] = pathFindingGraph->getNode(tankNode[i]->_getDerivedPosition());
+						tanks.at(i).startNode = pathFindingGraph->getNode(tanks.at(i).tankNode->_getDerivedPosition());
 						// set goal node
 						if(selectionMode==0)
 						{
 							do
 							{
-								goalNode[i] = (int)rand()%256;
-							}while(pathFindingGraph->getContent(goalNode[i])!=0);
+								tanks.at(i).goalNode = (int)rand()%256;
+							}while(pathFindingGraph->getContent(tanks.at(i).goalNode)!=0);
 						}
 						else
 						{
-							goalNode[i]=pathFindingGraph->getNode(location);
+							tanks.at(i).goalNode=pathFindingGraph->getNode(location);
 						}
 						//tB->appendText("GOAL NODE: "+std::to_string(goalNode[i])+" \n");
 						//tB->appendText("START NODE: "+std::to_string(startNode[i])+" \n");
 						// check that goal node is not the same as start node
-						if(goalNode[i] != startNode[i])
+						if(tanks.at(i).goalNode != tanks.at(i).startNode)
 						{
 							// try to find path from start to goal node
 							std::vector<int> path;
-							path2[i]->clear();
-							mCurrentState[i] = 0;
-							tankPath[i].clear();
-							currentNode[i]=-1;
+							tanks.at(i).path2->clear();
+							tanks.at(i).mCurrentState = 0;
+							tanks.at(i).tankPath.clear();
+							tanks.at(i).currentNode=-1;
 							// if path exists
 							//if(mPathFinder.Dijkstra(startNode, goalNode, *pathFindingGraph, path))
-							if(mPathFinder.AStar(startNode[i], goalNode[i], *pathFindingGraph, path))
+							if(mPathFinder.AStar(tanks.at(i).startNode, tanks.at(i).goalNode, *pathFindingGraph, path))
 							{
 								// draw path
 								//createPath(path1, 0.5, path, Ogre::ColourValue(1, 0, 0));
 						
 								//mPathFinder.AStar(startNode, goalNode, *pathFindingGraph, path);
-								createPath(path2[i], 1.0, path, Ogre::ColourValue(0, 0, 1));
+								createPath(tanks.at(i).path2, 1.0, path, Ogre::ColourValue(0, 0, 1));
 
 								// set state to path found
-								mCurrentState[i]++;
+								tanks.at(i).mCurrentState++;
 
 								//WIP TANK
 								//std::copy(path.begin(), path.end(), tankPath.begin());
 								for (std::vector<int>::iterator it = path.begin(); it!=path.end(); ++it)
 								{
-									tankPath[i].push_back(*it);
+									tanks.at(i).tankPath.push_back(*it);
 								}
-								currentNode[i]=0;
-								firstTime[i]=true;
+								tanks.at(i).currentNode=0;
+								tanks.at(i).firstTime=true;
+								if(selectionMode==2)
+								{
+									tanks.at(0).tankPath=tanks.at(i).tankPath;
+									tanks.at(0).currentNode=0;
+									tanks.at(0).firstTime=true;
+								}
 							}
 							else
 							{
 								tB->appendText("COULD NOT FIND PATH \n");
 								// no path so set state to no start node
-								mCurrentState[i] = 0;
+								tanks.at(i).mCurrentState = 0;
 							}
 						}
 						else
 						{
-							path2[i]->clear();
-							mCurrentState[i] = 0;
-							tankPath[i].clear();
-							currentNode[i]=-1;
-							firstTime[i]=true;
+							tanks.at(i).path2->clear();
+							tanks.at(i).mCurrentState = 0;
+							tanks.at(i).tankPath.clear();
+							tanks.at(i).currentNode=-1;
+							tanks.at(i).firstTime=true;
 						}
 					}
 				}
@@ -320,9 +329,9 @@ void DemoApp::camInput( const OIS::KeyEvent &arg )
 			break;
 		case OIS::KC_F:
 				if(selectionMode==0)
-					selectionMode=1;
+					selectionMode++;
 				else if(selectionMode==1)
-					selectionMode=2;
+					selectionMode++;
 				else if(selectionMode==2)
 					selectionMode=0;
 			break;
@@ -395,12 +404,12 @@ bool DemoApp::selectionBox()
 			mSelectionBox->setVisible(true);
 		if(controlPressed==false)
 		{
-			for(int i=0;i<TANK_LIMIT;i++)
+			for(int i=1;i<TANK_LIMIT;i++)
 			{
-				selected[i]=false;
-				tankNode[i]->detachObject(mSelectionCircle[i]);
-				tankNode[i]->detachObject(mHealthBar[i]);
-				path2[i]->setVisible(false);
+				tanks.at(i).selected=false;
+				tanks.at(i).tankNode->detachObject(mSelectionCircle[i]);
+				tanks.at(i).tankNode->detachObject(mHealthBar[i]);
+				tanks.at(i).path2->setVisible(false);
 			}
 		}
 		tB->setText(std::to_string(left)+" , "+std::to_string(right)+" , "+std::to_string(1-top)+" , "+std::to_string(1-bottom)+"\n");
@@ -408,21 +417,21 @@ bool DemoApp::selectionBox()
 		for(int i=0;i<TANK_LIMIT;i++)
 		{
 			
-			tB->appendText("TANK"+std::to_string(i)+": "+std::to_string(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x)+" , "+std::to_string(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).y)+"\n");
+			tB->appendText("TANK"+std::to_string(i)+": "+std::to_string(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x)+" , "+std::to_string(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y)+"\n");
 			//if(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x > left && GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x < right)
 			//	tB->appendText("TANK: "+std::to_string(i)+"  RIGHT+LEFT CORRECT\n");
 			//if(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).y > 1-top)
 			//	tB->appendText("TANK: "+std::to_string(i)+"  TOP CORRECT\n");
-			if(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x > left && GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x < right && GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).y < 1-top && GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).y > 1-bottom)
+			if(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x > left && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x < right && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y < 1-top && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y > 1-bottom)
 			{
 				tB->appendText("TANK SELECTED: "+std::to_string(i)+"\n");
-				selected[i]=true;
-				if(mSelectionCircle[i]->getParentSceneNode()!=tankNode[i])
-					tankNode[i]->attachObject(mSelectionCircle[i]);
-				if(mHealthBar[i]->getParentSceneNode()!=tankNode[i])
-					tankNode[i]->attachObject(mHealthBar[i]);
+				tanks.at(i).selected=true;
+				if(mSelectionCircle[i]->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(mSelectionCircle[i]);
+				if(mHealthBar[i]->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(mHealthBar[i]);
 				found=true;
-				path2[i]->setVisible(true);
+				tanks.at(i).path2->setVisible(true);
 			}	
 		}	
 		if(found==false)
@@ -510,7 +519,8 @@ void DemoApp::frameRenderingCamera()
 		}
 		camPos=camNode->getPosition();
 		mCamera->setOrientation(Ogre::Quaternion());
-		//
+		
+		//0
 		//camNode->setOrientation(Ogre::Quaternion(0,0,0,1));
 	}
 
@@ -518,6 +528,7 @@ void DemoApp::frameRenderingCamera()
 	//tB->appendText("Cam Pos Dest: ("+std::to_string(camPos.x)+")-("+std::to_string(camPos.y)+")-("+std::to_string(camPos.z)+")\n");
 	//R=camZ*(M_PI/(double)180);
 	//mCamera->setFOVy(R);
+	//tB->setText("Selection Mode: "+std::to_string(selectionMode)+"\n");
 	if(cMode==1)
 	{
 		camX=0;

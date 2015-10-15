@@ -6,6 +6,7 @@
 #include<math.h>
 #include "PhysicsEngine.h"
 #include"stdafx.h"
+#include<vector>;
 #define M_PI           3.14159265358979323846  /* pi */
 #define TANK_LIMIT           4  /* The number of tanks allowed in the game */
 class DemoApp : public BaseApplication
@@ -82,14 +83,38 @@ private:
 
 	//TankMovementAI Variables//
 	//Lab Variables
-	int mCurrentState[TANK_LIMIT];
+	class tank {
+	public:
+		int mCurrentState;
+		int startNode;
+		int goalNode;
+		bool selected;
+
+		Ogre::ManualObject* path2;
+		Ogre::SceneNode* tankNode;
+		std::vector<int> tankPath;
+		int currentNode;
+		Ogre::Real mRotProgress; 
+		bool firstTime;
+		Ogre::Quaternion orientDest;
+		tank()
+		{
+			selected=false;
+			firstTime=true;
+			mRotProgress=0;
+			currentNode=-1;
+			mCurrentState=0;
+		}
+	};
+	std::vector<tank> tanks;
+	/*int mCurrentState[TANK_LIMIT];
 	int startNode[TANK_LIMIT];
 	int goalNode[TANK_LIMIT];
-	bool selected[TANK_LIMIT];
+	bool selected[TANK_LIMIT];*/
 
 	Graph* pathFindingGraph;
 	PathFinding mPathFinder;
-	Ogre::ManualObject* path2[TANK_LIMIT];
+	/*Ogre::ManualObject* path2[TANK_LIMIT];
 
 	//Assignment Variables
 	Ogre::SceneNode* tankNode[TANK_LIMIT];
@@ -97,7 +122,7 @@ private:
 	int currentNode[TANK_LIMIT];
 	Ogre::Real mRotProgress[TANK_LIMIT]; 
 	bool firstTime[TANK_LIMIT];
-	Ogre::Quaternion orientDest[TANK_LIMIT];
+	Ogre::Quaternion orientDest[TANK_LIMIT];*/
 
 	//TankMovementAI Functions//
 	void tankMovement(const Ogre::FrameEvent&);

@@ -5,25 +5,25 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 {
 	for(int i=0; i<TANK_LIMIT;i++)
 	{
-		if(tankPath[i].size()!=0)
+		if(tanks.at(i).tankPath.size()!=0)
 		{
-			Ogre::Vector3 current=tankNode[i]->_getDerivedPosition();
+			Ogre::Vector3 current=tanks.at(i).tankNode->_getDerivedPosition();
 			Ogre::Vector3 goal;
 	
-			if(currentNode[i]+1!=tankPath[i].size())
+			if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size())
 			{
-				if(currentNode[i]+1!=tankPath[i].size());
-					goal=pathFindingGraph->getPosition(tankPath[i].at(currentNode[i]+1));
+				if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size());
+					goal=pathFindingGraph->getPosition(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1));
 				goal.y=0.5;
 
 				//Ogre::Vector3 src=tankNode[i]->getPosition();
 				Ogre::Vector2 v1;
-				v1.x=tankNode[i]->getPosition().x;
-				v1.y=tankNode[i]->getPosition().z;
+				v1.x=tanks.at(i).tankNode->getPosition().x;
+				v1.y=tanks.at(i).tankNode->getPosition().z;
 
-				Ogre::Quaternion q1=tankNode[i]->getOrientation();
+				Ogre::Quaternion q1=tanks.at(i).tankNode->getOrientation();
 				//tankNode[i]->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
-				Ogre::Quaternion q2=tankNode[i]->_getDerivedOrientation();
+				Ogre::Quaternion q2=tanks.at(i).tankNode->_getDerivedOrientation();
 
 				//Ogre::Quaternion mRotDest = src.getRotationTo(goal) * q1; 
 				
@@ -59,7 +59,7 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 				Ogre::Quaternion rot;
 
 				//Ogre::Vector3 lookat = m_nodes[0]->convertWorldToLocalPosition(m_camera->getPosition()) - Vector3(0, 1.9, 0);
-				Ogre::Quaternion temp = tankNode[i]->getPosition().getRotationTo(goal);   // temp is how much you need to rotate to get from the current orientation to the new orientation
+				Ogre::Quaternion temp = tanks.at(i).tankNode->getPosition().getRotationTo(goal);   // temp is how much you need to rotate to get from the current orientation to the new orientation
 				//temp.limitYaw(Ogre::Radian(evt.timeSinceLastFrame*3.0));   // limit the offset so the head turns at a maximum of 3.0 radians per second
 				//temp.limitPitch(Ogre::Radian(evt.timeSinceLastFrame*3.0));
  
@@ -69,45 +69,45 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 				//tankNode[i]->setOrientation(rot);
 			  // mat.FromEulerAnglesYXZ(yDeg, pDeg, rDeg);
 			 //  quat.FromRotationMatrix(mat);
-				if(tankNode[i]->getOrientation()== orientDest[i] && firstTime[i]==false )
+				if(tanks.at(i).tankNode->getOrientation()== tanks.at(i).orientDest && tanks.at(i).firstTime==false )
 				{
 					//mRotating = false;
-					if(firstTime[i]==true)
+					if(tanks.at(i).firstTime==true)
 					{
-						firstTime[i]=false;
-						mRotProgress[i]=0;
-						Ogre::Quaternion orig=tankNode[i]->_getDerivedOrientation();
-						tankNode[i]->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
-						orientDest[i]=tankNode[i]->_getDerivedOrientation();
-						tankNode[i]->setOrientation(orig);
+						tanks.at(i).firstTime=false;
+						tanks.at(i).mRotProgress=0;
+						Ogre::Quaternion orig=tanks.at(i).tankNode->_getDerivedOrientation();
+						tanks.at(i).tankNode->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
+						tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
+						tanks.at(i).tankNode->setOrientation(orig);
 					}
-					tankNode[i]->translate(tankNode[i]->getOrientation().xAxis() * 0.1);
+					tanks.at(i).tankNode->translate(tanks.at(i).tankNode->getOrientation().xAxis() * 0.1);
 					//tB->appendText("Moving");
 					//mRotProgress[i]=0;
 				}
 				else
 				{
-					if(firstTime[i]==true)
+					if(tanks.at(i).firstTime==true)
 					{
 						
-						firstTime[i]=false;
-						mRotProgress[i]=0;
-						Ogre::Quaternion orig=tankNode[i]->_getDerivedOrientation();
-						tankNode[i]->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
-						orientDest[i]=tankNode[i]->_getDerivedOrientation();
-						tankNode[i]->setOrientation(orig);
+						tanks.at(i).firstTime=false;
+						tanks.at(i).mRotProgress=0;
+						Ogre::Quaternion orig=tanks.at(i).tankNode->_getDerivedOrientation();
+						tanks.at(i).tankNode->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
+						tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
+						tanks.at(i).tankNode->setOrientation(orig);
 
 						//orientDest[i]=tankNode[i]->_getDerivedPosition().getRotationTo(goal) * tankNode[i]->_getDerivedOrientation();//   getOrientation(); 
 					}
-					if(tankNode[i]->getOrientation()== orientDest[i])
+					/*if(tankNode[i]->getOrientation()== orientDest[i])
 						tB->setText("Same Orientation \n");
 					else
-						tB->setText("Different Orientation \n");
-					mRotProgress[i]+=1.0f;
+						tB->setText("Different Orientation \n");*/
+					tanks.at(i).mRotProgress+=1.0f;
 					//Ogre::Quaternion delta = Ogre::Quaternion::Slerp(mRotProgress[i], q1, q2, true);
 					//tankNode[i]->setOrientation(Ogre::Quaternion::Slerp(evt.timeSinceLastFrame*2, q1, mRotDest));
-					Ogre::Quaternion delta = Ogre::Quaternion::nlerp(mRotProgress[i]*evt.timeSinceLastFrame, tankNode[i]->getOrientation(), orientDest[i], true);
-					tankNode[i]->setOrientation(delta);
+					Ogre::Quaternion delta = Ogre::Quaternion::nlerp(tanks.at(i).mRotProgress*evt.timeSinceLastFrame, tanks.at(i).tankNode->getOrientation(), tanks.at(i).orientDest, true);
+					tanks.at(i).tankNode->setOrientation(delta);
 					//tB->setText(std::to_string(q1.w)+" , "+std::to_string(q1.x)+" , "+std::to_string(q1.y)+" , "+std::to_string(q1.z)+" \n"+std::to_string(orientDest[i].w)+" , "+std::to_string(orientDest[i].x)+" , "+std::to_string(orientDest[i].y)+" , "+std::to_string(orientDest[i].z)+"\n");
 					//tB->appendText("Rotating");
 					
@@ -115,11 +115,11 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 
 				if(WithinBounds(current,goal))
 				{
-						tB->appendText("Reset");
-						currentNode[i]++;
-						mRotProgress[i]=0;
+						//tB->appendText("Reset");
+						tanks.at(i).currentNode++;
+						tanks.at(i).mRotProgress=0;
 						//tankNode[i]->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
-						firstTime[i]=true;
+						tanks.at(i).firstTime=true;
 						//orientDest[i];
 				}
 				
@@ -128,12 +128,12 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 			else
 			{
 				// reset
-				mCurrentState[i] = 0;
+				tanks.at(i).mCurrentState = 0;
 				//path1->clear();
-				path2[i]->clear();
-				tankPath[i].clear();
-				currentNode[i]=-1;
-				firstTime[i]=true;
+				tanks.at(i).path2->clear();
+				tanks.at(i).tankPath.clear();
+				tanks.at(i).currentNode=-1;
+				tanks.at(i).firstTime=true;
 			}
 
 			//tB->appendText("CURRENT NODE: "+std::to_string(currentNode)+"\n");
