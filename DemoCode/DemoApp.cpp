@@ -42,8 +42,13 @@ bool DemoApp::setup(void)
 	mTrayMgr->showCursor();
 
 	pathFindingGraph = new Graph;
+<<<<<<< HEAD
 	//for(int i=0;i<TANK_LIMIT;i++)
 	//	mCurrentState[i] = 0;
+=======
+	for(int i=0;i<TANK_LIMIT;i++)
+		tanks.at(i).mCurrentState = 0;
+>>>>>>> origin/master
 
 	mDirection = Ogre::Vector3::ZERO;
 
