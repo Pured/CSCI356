@@ -97,6 +97,8 @@ private:
 		Ogre::Real mRotProgress; 
 		bool firstTime;
 		Ogre::Quaternion orientDest;
+		Ogre::BillboardSet* mHealthBar;
+		Ogre::BillboardSet* mSelectionCircle;
 		tank()
 		{
 			selected=false;
@@ -130,9 +132,9 @@ private:
 	void DemoApp::generatePath();
 
 	//Selection BillBoard variables
-	Ogre::BillboardSet* mHealthBar[TANK_LIMIT];
+	//Ogre::BillboardSet* mHealthBar[TANK_LIMIT];
 	Ogre::Billboard* mHealthBarBB;
-	Ogre::BillboardSet* mSelectionCircle[TANK_LIMIT];
+	//Ogre::BillboardSet* mSelectionCircle[TANK_LIMIT];
 	Ogre::Billboard* mSelectionCircleBB;
 };
  

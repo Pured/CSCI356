@@ -142,20 +142,20 @@ bool DemoApp::quickSelect()
 			{
 				tB->appendText("TANK QUICKSELECTED: "+std::to_string(i)+"\n");
 				tanks.at(i).selected=true;
-				if(mSelectionCircle[i]->getParentSceneNode()!=tanks.at(i).tankNode)
-					tanks.at(i).tankNode->attachObject(mSelectionCircle[i]);
-				if(mHealthBar[i]->getParentSceneNode()!=tanks.at(i).tankNode)
-					tanks.at(i).tankNode->attachObject(mHealthBar[i]);
-				found=true;
+				if(tanks.at(i).mSelectionCircle->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(tanks.at(i).mSelectionCircle);
+				if(tanks.at(i).mHealthBar->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(tanks.at(i).mHealthBar);
+				found=true;	
 				tanks.at(i).path2->setVisible(true);
 			}
 			else if(controlPressed==false)
 			{
 				tanks.at(i).selected=false;
-				if(mSelectionCircle[i]->getParentSceneNode()==tanks.at(i).tankNode)
-					tanks.at(i).tankNode->detachObject(mSelectionCircle[i]);
-				if(mHealthBar[i]->getParentSceneNode()==tanks.at(i).tankNode)
-					tanks.at(i).tankNode->detachObject(mHealthBar[i]);
+				if(tanks.at(i).mSelectionCircle->getParentSceneNode()==tanks.at(i).tankNode)
+					tanks.at(i).tankNode->detachObject(tanks.at(i).mSelectionCircle);
+				if(tanks.at(i).mHealthBar->getParentSceneNode()==tanks.at(i).tankNode)
+					tanks.at(i).tankNode->detachObject(tanks.at(i).mHealthBar);
 				tanks.at(i).path2->setVisible(false);
 			}
 		}
@@ -407,8 +407,8 @@ bool DemoApp::selectionBox()
 			for(int i=1;i<TANK_LIMIT;i++)
 			{
 				tanks.at(i).selected=false;
-				tanks.at(i).tankNode->detachObject(mSelectionCircle[i]);
-				tanks.at(i).tankNode->detachObject(mHealthBar[i]);
+				tanks.at(i).tankNode->detachObject(tanks.at(i).mSelectionCircle);
+				tanks.at(i).tankNode->detachObject(tanks.at(i).mHealthBar);
 				tanks.at(i).path2->setVisible(false);
 			}
 		}
@@ -426,10 +426,10 @@ bool DemoApp::selectionBox()
 			{
 				tB->appendText("TANK SELECTED: "+std::to_string(i)+"\n");
 				tanks.at(i).selected=true;
-				if(mSelectionCircle[i]->getParentSceneNode()!=tanks.at(i).tankNode)
-					tanks.at(i).tankNode->attachObject(mSelectionCircle[i]);
-				if(mHealthBar[i]->getParentSceneNode()!=tanks.at(i).tankNode)
-					tanks.at(i).tankNode->attachObject(mHealthBar[i]);
+				if(tanks.at(i).mSelectionCircle->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(tanks.at(i).mSelectionCircle);
+				if(tanks.at(i).mHealthBar->getParentSceneNode()!=tanks.at(i).tankNode)
+					tanks.at(i).tankNode->attachObject(tanks.at(i).mHealthBar);
 				found=true;
 				tanks.at(i).path2->setVisible(true);
 			}	

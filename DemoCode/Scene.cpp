@@ -88,27 +88,27 @@ void DemoApp::mapSetup()
 	for(int i=0;i<TANK_LIMIT;i++)
 	{
 		// Create a BillboardSet to represent a health bar and set its properties
-		mHealthBar[i] = mSceneMgr->createBillboardSet("Healthbar1"+std::to_string(i));
-		mHealthBar[i]->setCastShadows(false);
-		mHealthBar[i]->setDefaultDimensions(5, 1);
-		mHealthBar[i]->setMaterialName("myMaterial/HealthBar");
+		tanks.at(i).mHealthBar = mSceneMgr->createBillboardSet("Healthbar1"+std::to_string(i));
+		tanks.at(i).mHealthBar->setCastShadows(false);
+		tanks.at(i).mHealthBar->setDefaultDimensions(5, 1);
+		tanks.at(i).mHealthBar->setMaterialName("myMaterial/HealthBar");
 
 		// Create a billboard for the health bar BillboardSet
-		mHealthBarBB = mHealthBar[i]->createBillboard(Ogre::Vector3(0, 5, 0));
+		mHealthBarBB = tanks.at(i).mHealthBar->createBillboard(Ogre::Vector3(0, 5, 0));
 
 		//tankNode[i]->attachObject(mHealthBar[i]);
 
 		// Create a BillboardSet for a selection circle and set its properties
-		mSelectionCircle[i] = mSceneMgr->createBillboardSet("SelectionCircle"+std::to_string(i));
-		mSelectionCircle[i]->setCastShadows(false);
-		mSelectionCircle[i]->setDefaultDimensions(10, 10);
-		mSelectionCircle[i]->setMaterialName("myMaterial/SelectionCircle");
-		mSelectionCircle[i]->setBillboardType(Ogre::BillboardType::BBT_PERPENDICULAR_COMMON);
-		mSelectionCircle[i]->setCommonDirection(Ogre::Vector3(0, 1, 0));
-		mSelectionCircle[i]->setCommonUpVector(Ogre::Vector3(0, 0, -1));
+		tanks.at(i).mSelectionCircle = mSceneMgr->createBillboardSet("SelectionCircle"+std::to_string(i));
+		tanks.at(i).mSelectionCircle->setCastShadows(false);
+		tanks.at(i).mSelectionCircle->setDefaultDimensions(10, 10);
+		tanks.at(i).mSelectionCircle->setMaterialName("myMaterial/SelectionCircle");
+		tanks.at(i).mSelectionCircle->setBillboardType(Ogre::BillboardType::BBT_PERPENDICULAR_COMMON);
+		tanks.at(i).mSelectionCircle->setCommonDirection(Ogre::Vector3(0, 1, 0));
+		tanks.at(i).mSelectionCircle->setCommonUpVector(Ogre::Vector3(0, 0, -1));
 
 		// Create a billboard for the selection circle BillboardSet
-		mSelectionCircleBB = mSelectionCircle[i]->createBillboard(Ogre::Vector3(0, 0.05, 0));
+		mSelectionCircleBB = tanks.at(i).mSelectionCircle->createBillboard(Ogre::Vector3(0, 0.05, 0));
 		mSelectionCircleBB->setTexcoordRect(0.0, 0.0, 1.0, 1.0);
 
 		//tankNode[i]->attachObject(mSelectionCircle[i]);

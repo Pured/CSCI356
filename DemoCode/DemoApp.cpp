@@ -3,8 +3,8 @@
 //-------------------------------------------------------------------------------------
 DemoApp::DemoApp(void)
 {
-	for(int i=0;i<TANK_LIMIT;i++)
-		currentNode[i]=-1;
+	//for(int i=0;i<TANK_LIMIT;i++)
+	//	currentNode[i]=-1;
 	camX=0;
 	camY=0;
 	camZ=45;
@@ -12,12 +12,12 @@ DemoApp::DemoApp(void)
 	lookAtDest=(0,0,0);
 	srand(time(NULL));
 	selectionMode=1;
-	for(int i=0;i<TANK_LIMIT;i++)
+	/*for(int i=0;i<TANK_LIMIT;i++)
 		selected[i]=false;
 	for(int i=0;i<TANK_LIMIT;i++)
 		firstTime[i]=true;
 	for(int i=0;i<TANK_LIMIT;i++)
-		mRotProgress[i]=0;
+		mRotProgress[i]=0;*/
 	boxTimeout=0;
 	controlPressed=false;
 	mousePressedVar=false;
@@ -42,8 +42,8 @@ bool DemoApp::setup(void)
 	mTrayMgr->showCursor();
 
 	pathFindingGraph = new Graph;
-	for(int i=0;i<TANK_LIMIT;i++)
-		mCurrentState[i] = 0;
+	//for(int i=0;i<TANK_LIMIT;i++)
+	//	mCurrentState[i] = 0;
 
 	mDirection = Ogre::Vector3::ZERO;
 
