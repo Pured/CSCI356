@@ -6,7 +6,7 @@
 #include "OgreRoot.h"
 #include "connection.h"
 
-#define GRID_DIMENSION 32	// 10 x 10 grid
+#define GRID_DIMENSION 32	// 32 x 32 grid
 #define TOTAL_NODES 1024
 #define SQUARE_SIZE 10
 
@@ -28,6 +28,8 @@ public:
 	int getNode(Ogre::Vector3 position);
 	// given a node, return all the outgoing connections
 	void getConnections(int fromNode, Connection connections[]);
+	//Change the value of the grid
+	void setContent(int nodeNum, int value);
 };
 
 #endif

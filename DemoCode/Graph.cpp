@@ -56,7 +56,10 @@ Graph::Graph()
 
 Graph::~Graph()
 {}
-
+void Graph::setContent(int nodeNum, int value)
+{
+	mGrid[nodeNum]=value;
+}
 int Graph::getContent(int nodeNum)
 {
 	return mGrid[nodeNum];
@@ -82,8 +85,10 @@ int Graph::getNode(Ogre::Vector3 position)
 
 	int nodeNumber = column + row*GRID_DIMENSION;
 
-	if(mGrid[nodeNumber] > 0)
+	if(mGrid[nodeNumber] == 1)
 		return -1;
+	else if(mGrid[nodeNumber] == 2)
+		return nodeNumber;
 	else
 		return nodeNumber;
 }

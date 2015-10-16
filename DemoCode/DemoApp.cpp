@@ -3,8 +3,6 @@
 //-------------------------------------------------------------------------------------
 DemoApp::DemoApp(void)
 {
-	//for(int i=0;i<TANK_LIMIT;i++)
-	//	currentNode[i]=-1;
 	camX=0;
 	camY=0;
 	camZ=45;
@@ -12,12 +10,6 @@ DemoApp::DemoApp(void)
 	lookAtDest=(0,0,0);
 	srand(time(NULL));
 	selectionMode=1;
-	/*for(int i=0;i<TANK_LIMIT;i++)
-		selected[i]=false;
-	for(int i=0;i<TANK_LIMIT;i++)
-		firstTime[i]=true;
-	for(int i=0;i<TANK_LIMIT;i++)
-		mRotProgress[i]=0;*/
 	boxTimeout=0;
 	controlPressed=false;
 	mousePressedVar=false;
@@ -47,10 +39,6 @@ bool DemoApp::setup(void)
 	mTrayMgr->showCursor();
 
 	pathFindingGraph = new Graph;
-	//for(int i=0;i<TANK_LIMIT;i++)
-	//	mCurrentState[i] = 0;
-	//for(int i=0;i<TANK_LIMIT;i++)
-	//	tanks.at(i).mCurrentState = 0;
 
 	mDirection = Ogre::Vector3::ZERO;
 
@@ -109,8 +97,8 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
  void DemoApp::createFrameListener(void)
 {
 	BaseApplication::createFrameListener();
-	tB = mTrayMgr->createTextBox(OgreBites::TL_TOPRIGHT, "InfoPanel", "Information", 500, 400);
-
+	tB = mTrayMgr->createTextBox(OgreBites::TL_TOPRIGHT, "InfoPanel", "Information", 500, 300);
+	//mTrayMgr->getTrayContainer(OgreBites::TL_TOPRIGHT)->hide();
 }
 // OIS::KeyListener
 bool DemoApp::keyPressed( const OIS::KeyEvent &arg )
@@ -128,12 +116,6 @@ bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 			cMode=0;
 			lookAtDest=(0,0,0);
 			mTrayMgr->showCursor();
-			//camNode->setOrientation(Ogre::Quaternion());
-			//mCamera->setOrientation(Ogre::Quaternion());
-			//camNode->setOrientation(mCamera->getOrientation());
-			//camNode->setPosition(mCamera->getPosition());
-			//mCamera->setPosition(camNode->getPosition());
-			//camNode->attachObject(mCamera);
 			break;
 		case::OIS::KC_LCONTROL:
 			controlPressed=false;

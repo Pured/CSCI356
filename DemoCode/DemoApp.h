@@ -104,6 +104,7 @@ private:
 		Ogre::Quaternion orientDest;
 		Ogre::BillboardSet* mHealthBar;
 		Ogre::BillboardSet* mSelectionCircle;
+		Ogre::Radian originalRoll;
 		tank()
 		{
 			selected=false;
@@ -115,6 +116,7 @@ private:
 			health=-1;
 		}
 	};
+
 	std::vector<tank> tanks;
 	/*int mCurrentState[TANK_LIMIT];
 	int startNode[TANK_LIMIT];
@@ -141,6 +143,7 @@ private:
 	void tankMovement(const Ogre::FrameEvent&);
 	void createPath(Ogre::ManualObject* line, float height, std::vector<int>& path, Ogre::ColourValue& colour);
 	void generatePath();
+	bool WithinRotationBounds(tank );
 
 	//Selection BillBoard variables
 	//Ogre::BillboardSet* mHealthBar[TANK_LIMIT];

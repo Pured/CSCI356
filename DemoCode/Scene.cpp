@@ -59,6 +59,14 @@ void DemoApp::mapSetup()
 		//Spawns the tank in the map based on team
 		respawnTank(i);
 	}
+	for(int j=0;j<1024;j++)
+	{
+		printf("%i,",pathFindingGraph->getContent(j));
+		if((j+1)%32==0 && j!=0)
+			printf("\n");
+	}
+	printf("\n");
+	printf("\n");
 }
 Ogre::ManualObject* DemoApp::createSelectionBox(Ogre::String name)
 {

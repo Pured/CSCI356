@@ -12,63 +12,101 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 	
 			if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size())
 			{
-				if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size());
-					goal=pathFindingGraph->getPosition(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1));
-				goal.y=0.5;
-
-				if(tanks.at(i).tankNode->getOrientation()== tanks.at(i).orientDest && tanks.at(i).firstTime==false )
+				//printf("TANK %i : next node %i \n",i, pathFindingGraph->getContent(tanks.at(i).currentNode+1));
+				if( pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1))!=2)
 				{
-					if(tanks.at(i).firstTime==true)
-					{
-						tanks.at(i).firstTime=false;
-						tanks.at(i).mRotProgress=0;
-						Ogre::Quaternion orig=tanks.at(i).tankNode->_getDerivedOrientation();
-						tanks.at(i).tankNode->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
-						tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
-						tanks.at(i).tankNode->setOrientation(orig);
-					}
-					tanks.at(i).tankNode->translate(tanks.at(i).tankNode->getOrientation().xAxis() * 0.1);
-				}
-				else
-				{
-					if(tanks.at(i).firstTime==true)
-					{
-						
-						tanks.at(i).firstTime=false;
-						tanks.at(i).mRotProgress=0;
-						Ogre::Quaternion orig=tanks.at(i).tankNode->_getDerivedOrientation();
-						tanks.at(i).tankNode->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
-						tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
-						tanks.at(i).tankNode->setOrientation(orig);
-					}
-					tanks.at(i).mRotProgress+=1.0f;
-					Ogre::Quaternion delta = Ogre::Quaternion::nlerp(tanks.at(i).mRotProgress*evt.timeSinceLastFrame, tanks.at(i).tankNode->getOrientation(), tanks.at(i).orientDest, true);
-					tanks.at(i).tankNode->setOrientation(delta);
 					
-				}
+					if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size());
+						goal=pathFindingGraph->getPosition(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1));
+					goal.y=0.5;
 
-				if(WithinBounds(current,goal))
-				{
-						tanks.at(i).currentNode++;
-						tanks.at(i).mRotProgress=0;
-						tanks.at(i).firstTime=true;
+					//printf("TANK YAW %i : GOAL YAW %i \n",(int)tanks.at(i).tankNode->getOrientation().getYaw().valueDegrees(), (int)tanks.at(i).orientDest.getYaw().valueDegrees());
+					if(WithinRotationBounds(tanks.at(i)))
+					{
+						tanks.at(i).tankNode->setOrientation(tanks.at(i).orientDest);
+					}
+					/*if(WithinRotationBounds(tanks.at(i)) && tanks.at(i).firstTime==true)
+						printf("VALID BOUNDS AND FIRST TIME \n");
+					else if(WithinRotationBounds(tanks.at(i)) && tanks.at(i).firstTime==false)
+						printf("VALID BOUNDS AND NOT FIRST TIME \n");*/
+					if(WithinRotationBounds(tanks.at(i)) && tanks.at(i).firstTime==false )
+					{
+						//printf("FINISHED TANK YAW %f : GOAL YAW %f \n",tanks.at(i).tankNode->getOrientation().getYaw(), tanks.at(i).orientDest.getYaw());
+						if(tanks.at(i).firstTime==true)
+						{
+							tanks.at(i).firstTime=false;
+							tanks.at(i).mRotProgress=0;
+							Ogre::Quaternion orig=tanks.at(i).tankNode->_getDerivedOrientation();
+							tanks.at(i).tankNode->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
+							tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
+							tanks.at(i).tankNode->setOrientation(orig);
+						}
+						tanks.at(i).tankNode->translate(tanks.at(i).tankNode->getOrientation().xAxis() * 0.2);
+						//printf("Moving \n");
+					}
+					else
+					{
+						if(tanks.at(i).firstTime==true)
+						{
+						
+							tanks.at(i).firstTime=false;
+							tanks.at(i).mRotProgress=0;
+							Ogre::Quaternion orig=tanks.at(i).tankNode->_getDerivedOrientation();
+							tanks.at(i).tankNode->lookAt(goal,Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X);
+							tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
+							tanks.at(i).tankNode->setOrientation(orig);
+						}
+						//printf("Rotating \n");
+						tanks.at(i).mRotProgress+=2.0f;
+						Ogre::Quaternion delta = Ogre::Quaternion::nlerp(tanks.at(i).mRotProgress*evt.timeSinceLastFrame, tanks.at(i).tankNode->getOrientation(), tanks.at(i).orientDest, true);
+						tanks.at(i).tankNode->setOrientation(delta);
+						tanks.at(i).tankNode->roll(tanks.at(i).originalRoll);
+					
+					}
+
+					if(WithinBounds(current,goal))
+					{
+							pathFindingGraph->setContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode),0);
+							pathFindingGraph->setContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1),2);
+							tanks.at(i).currentNode++;
+							tanks.at(i).mRotProgress=0;
+							tanks.at(i).firstTime=true;
+							
+							/*for(int j=0;j<1024;j++)
+							{
+								printf("%i,",pathFindingGraph->getContent(j));
+								if((j+1)%32==0 && j!=0)
+									printf("\n");
+							}
+							printf("\n");
+							printf("\n");*/
+					}
 				}
 			}
 			else
 			{
+				//pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
 				resetPath(i);
 			}
 		}
 	}
 }
+bool DemoApp::WithinRotationBounds(tank one)
+{
+	if(one.tankNode->getOrientation().getYaw().valueDegrees()>one.orientDest.getYaw().valueDegrees()-2 && one.tankNode->getOrientation().getYaw().valueDegrees()<one.orientDest.getYaw().valueDegrees()+2)
+		return true;
+	else return false;
+}
 void DemoApp::findPath(int i)
 {
-	// try to find path from start to goal node
+	// Try to find a new path
+	//Resets everything to default state
 	std::vector<int> path;
 	tanks.at(i).path2->clear();
 	tanks.at(i).mCurrentState = 0;
 	tanks.at(i).tankPath.clear();
 	tanks.at(i).currentNode=-1;
+	pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),0);
 	// if path exists
 	if(mPathFinder.AStar(tanks.at(i).startNode, tanks.at(i).goalNode, *pathFindingGraph, path))
 	{
@@ -86,6 +124,7 @@ void DemoApp::findPath(int i)
 	else
 	{
 		tB->appendText("COULD NOT FIND PATH \n");
+		pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
 		// no path so set state to no start node
 		tanks.at(i).mCurrentState = 0;
 	}
@@ -95,6 +134,8 @@ void DemoApp::resetPath(int i)
 	tanks.at(i).path2->clear();
 	tanks.at(i).mCurrentState = 0;
 	tanks.at(i).tankPath.clear();
+
+	
 	tanks.at(i).currentNode=-1;
 	tanks.at(i).firstTime=true;	
 }
@@ -148,7 +189,7 @@ void DemoApp::createTank(int i)
 		mSelectionCircleBB = tmp.mSelectionCircle->createBillboard(Ogre::Vector3(0, 0.05, 0));
 		mSelectionCircleBB->setTexcoordRect(0.0, 0.0, 1.0, 1.0);
 
-
+		tmp.originalRoll=tmp.tankNode->getOrientation().getRoll();
 		tanks.push_back(tmp);
 }
 void DemoApp::respawnTank(int i)
@@ -156,11 +197,25 @@ void DemoApp::respawnTank(int i)
 		// Place object at appropriate position
 		
 		Ogre::Vector3 position;
-		if(tanks.at(i).team==2)
-			position=pathFindingGraph->getPosition(((rand()%32)*32)+(32-(rand() % 3)));
-		else
-			position=pathFindingGraph->getPosition(((rand()%32)*32)+((rand() % 3)));
-		position.y = 0.7;
+		int node=0;
+		do
+		{
+			
+			if(tanks.at(i).team==2)
+			{
+				//printf("%i team 2 \n",i);
+				node=((rand()%32)*32)+(32-(rand() % 3+1));
+				position=pathFindingGraph->getPosition(node);
+			}
+			else
+			{
+				//printf("%i team 1 \n",i);
+				node=((rand()%32)*32)+((rand() % 3));
+				position=pathFindingGraph->getPosition(node);
+			}
+			position.y = 0.7;
+		}while(pathFindingGraph->getContent(node)==2);
+		pathFindingGraph->setContent(node,2);
 		tanks.at(i).tankNode->setPosition(position);	
 		tanks.at(i).health=100;
 }
