@@ -6,8 +6,8 @@
 #include "OgreRoot.h"
 #include "connection.h"
 
-#define GRID_DIMENSION 16	// 10 x 10 grid
-#define TOTAL_NODES 256
+#define GRID_DIMENSION 32	// 10 x 10 grid
+#define TOTAL_NODES 1024
 #define SQUARE_SIZE 10
 
 class Graph

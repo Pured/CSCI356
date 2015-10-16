@@ -8,7 +8,7 @@
 #include"stdafx.h"
 #include<vector>;
 #define M_PI           3.14159265358979323846  /* pi */
-#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
+//#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
 class DemoApp : public BaseApplication
 {
 public:
@@ -39,6 +39,9 @@ private:
 	//Contains debug TextBox variables
 	OgreBites::TextBox* tB;
 	//SDKtrays functions
+
+	int TANK_LIMIT;
+
 	virtual void createFrameListener(void);
 
 	//Map Setup Functions//
@@ -85,6 +88,8 @@ private:
 	//Lab Variables
 	class tank {
 	public:
+		int health;
+		int team;
 		int mCurrentState;
 		int startNode;
 		int goalNode;
@@ -106,6 +111,8 @@ private:
 			mRotProgress=0;
 			currentNode=-1;
 			mCurrentState=0;
+			team=-1;
+			health=-1;
 		}
 	};
 	std::vector<tank> tanks;
@@ -127,9 +134,13 @@ private:
 	Ogre::Quaternion orientDest[TANK_LIMIT];*/
 
 	//TankMovementAI Functions//
+	void createTank(int);
+	void respawnTank(int);
+	void findPath(int);
+	void resetPath(int);
 	void tankMovement(const Ogre::FrameEvent&);
 	void createPath(Ogre::ManualObject* line, float height, std::vector<int>& path, Ogre::ColourValue& colour);
-	void DemoApp::generatePath();
+	void generatePath();
 
 	//Selection BillBoard variables
 	//Ogre::BillboardSet* mHealthBar[TANK_LIMIT];

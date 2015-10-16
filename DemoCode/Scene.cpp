@@ -3,6 +3,9 @@
 
 void DemoApp::mapSetup()
 {
+	srand (time(NULL));
+
+	TANK_LIMIT=4;
 	// Create a selection box object
 	mSelectionBox = createSelectionBox("Box");
 
@@ -13,11 +16,11 @@ void DemoApp::mapSetup()
 
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
 	Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 
-		160, 160, 20, 20, true, 1, 2.5, 2.5, Ogre::Vector3::UNIT_Z);
+		320, 320, 20, 20, true, 1, 2.5, 2.5, Ogre::Vector3::UNIT_Z);
 
 	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
 	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
-	entGround->setMaterialName("Ground");
+	entGround->setMaterialName("Examples/GrassFloor");
 	entGround->setCastShadows(false);
 
 
@@ -41,77 +44,20 @@ void DemoApp::mapSetup()
 			// Attach entity to scene node
 			Ogre::SceneNode* myNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 			myNode->attachObject(cube);
-			myNode->scale(0.1, 0.01, 0.1);
+			myNode->scale(0.1, 0.1, 0.1);
 			
 			// Place object at appropriate position
 			Ogre::Vector3 position = pathFindingGraph->getPosition(nodeNumber);
-			position.y = 0.5;
+			position.y = 5;
 			myNode->translate(position);
 		}
 	}
-
-	// create the path objects, and clear them to start off
-	//path1 = mSceneMgr->createManualObject("DijkstraPath");
-	//path1->clear();
-	//mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(path1);
 	for(int i=0;i<TANK_LIMIT;i++)
 	{
-		tank tmp;
-		
-		tmp.path2 = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
-		tmp.path2->clear();
-		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(tmp.path2);
-		tanks.push_back(tmp);
-	}
-	for(int i=0; i<TANK_LIMIT; i++)
-	{
-		/*Tank Stuff*/
-		std::string entityName = "Tank"+std::to_string(i);
-
-		// Create entity
-		Ogre::Entity* fish = mSceneMgr->createEntity(entityName, "fish.mesh");
-		//cube->setMaterialName("Examples/BumpyMetal");
-
-		// Attach entity to scene node
-		tanks.at(i).tankNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-		Ogre::SceneNode * rePos=tanks.at(i).tankNode->createChildSceneNode();
-		rePos->yaw(Ogre::Degree(180));
-		rePos->attachObject(fish);
-		//tankNode[i]->scale(0.1, 0.01, 0.1);
-			
-		// Place object at appropriate position
-		Ogre::Vector3 position = pathFindingGraph->getPosition((i*16));
-		position.y = 0.7;
-		tanks.at(i).tankNode->translate(position);
-		
-	}
-	for(int i=0;i<TANK_LIMIT;i++)
-	{
-		// Create a BillboardSet to represent a health bar and set its properties
-		tanks.at(i).mHealthBar = mSceneMgr->createBillboardSet("Healthbar1"+std::to_string(i));
-		tanks.at(i).mHealthBar->setCastShadows(false);
-		tanks.at(i).mHealthBar->setDefaultDimensions(5, 1);
-		tanks.at(i).mHealthBar->setMaterialName("myMaterial/HealthBar");
-
-		// Create a billboard for the health bar BillboardSet
-		mHealthBarBB = tanks.at(i).mHealthBar->createBillboard(Ogre::Vector3(0, 5, 0));
-
-		//tankNode[i]->attachObject(mHealthBar[i]);
-
-		// Create a BillboardSet for a selection circle and set its properties
-		tanks.at(i).mSelectionCircle = mSceneMgr->createBillboardSet("SelectionCircle"+std::to_string(i));
-		tanks.at(i).mSelectionCircle->setCastShadows(false);
-		tanks.at(i).mSelectionCircle->setDefaultDimensions(10, 10);
-		tanks.at(i).mSelectionCircle->setMaterialName("myMaterial/SelectionCircle");
-		tanks.at(i).mSelectionCircle->setBillboardType(Ogre::BillboardType::BBT_PERPENDICULAR_COMMON);
-		tanks.at(i).mSelectionCircle->setCommonDirection(Ogre::Vector3(0, 1, 0));
-		tanks.at(i).mSelectionCircle->setCommonUpVector(Ogre::Vector3(0, 0, -1));
-
-		// Create a billboard for the selection circle BillboardSet
-		mSelectionCircleBB = tanks.at(i).mSelectionCircle->createBillboard(Ogre::Vector3(0, 0.05, 0));
-		mSelectionCircleBB->setTexcoordRect(0.0, 0.0, 1.0, 1.0);
-
-		//tankNode[i]->attachObject(mSelectionCircle[i]);
+		//Creates a new tank
+		createTank(i);
+		//Spawns the tank in the map based on team
+		respawnTank(i);
 	}
 }
 Ogre::ManualObject* DemoApp::createSelectionBox(Ogre::String name)

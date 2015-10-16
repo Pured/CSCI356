@@ -3,14 +3,8 @@
 void DemoApp::camMovement( const OIS::MouseEvent &arg )
 {
 	//Rotation and movement variables
-	//mRotationX = Ogre::Degree(-mMouse->getMouseState().X.rel * 0.13);
-	//mRotationY = Ogre::Degree(-mMouse->getMouseState().Y.rel * 0.13);
 	if(cMode==0)
 	{
-		/*if(arg.state.Z.rel>0)
-			camZ-=0.1;
-		else if(arg.state.Z.rel<0 )
-			camZ+=0.1;*/
 		if(mMouse->getMouseState().X.abs > vp->getActualWidth()-50 )
 			camX+=0.1;
 		else if(mMouse->getMouseState().X.abs < 50 )
@@ -27,19 +21,6 @@ void DemoApp::camMovement( const OIS::MouseEvent &arg )
 	}
 	else if(cMode==1)
 	{
-		/*if(mMouse->getMouseState().Y.rel > 0)
-		{
-			camY+=0.003;
-		}
-		else if(mMouse->getMouseState().X.rel > 0)
-		{
-			camY+=0.003;
-		}*/
-		//if(mMouse->getMouseState().Y.rel > 0)
-		//camY = arg.state.Y.rel*0.7;
-		//else if(mMouse->getMouseState().X.rel > 0)
-		//camX = arg.state.X.rel*0.7;
-
 		mRotationX = Ogre::Degree(-mMouse->getMouseState().X.rel * 0.13);
 		mRotationY = Ogre::Degree(-mMouse->getMouseState().Y.rel * 0.13);
 	}
@@ -61,35 +42,14 @@ bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 				}
 				if(boxTimeout<6)
 				{
-					//if(quickSelect()==false)
 					quickSelect();
-						nextClickPath=false;
-					//else
-					//	nextClickPath=true;
 				}
-				/*else
-				{
-					if(nextClickPath==true)
-					{
-						nextClickPath=false;
-					}
-					else
-						nextClickPath=true;
-				}*/
 				boxTimeout=0;
 				mousePressedVar=false;
 			}
 			break;
 			case OIS::MB_Right:
 			{
-				//if(nextClickPath==true)
-				if(selectionMode==2)
-				{
-					//tankPath[0]=
-					//currentNode[0]=0;
-					//firstTime[0]=true;
-					//selected[0]=true;
-				}
 				generatePath();
 			}
 			break;
@@ -119,14 +79,10 @@ bool DemoApp::quickSelect()
 	Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
 	Ogre::RaySceneQueryResult::iterator itr = result.begin();
 
-	// if hit an object
-	//&& selectionMode==1) || selectionMode==0
 	if((itr != result.end() && itr->movable))
 	{
 		
 		//Get hit location
-		//Ogre::Vector3 location = mouseRay.getPoint(itr->distance);
-
 		Ogre::String name = itr->movable->getName();
 		bool found=false;
 		if(name=="Box")
@@ -135,7 +91,7 @@ bool DemoApp::quickSelect()
 			name = itr->movable->getName();
 		}
 
-		for(int i=1;i<TANK_LIMIT;i++)
+		for(int i=0;i<TANK_LIMIT;i++)
 		{
 			tB->appendText("RAY NAME: "+name+"\n");
 			if(name=="Tank"+std::to_string(i))
@@ -170,13 +126,11 @@ void DemoApp::generatePath()
 	tB->setText("");
 	for(int i=0;i<TANK_LIMIT;i++)
 	{
-		//tB->appendText("START OF FOR : "+std::to_string(i)+"\n");
 		// if path already exists
 		if(tanks.at(i).mCurrentState > 1)
 		{
 			// reset
 			tanks.at(i).mCurrentState = 0;
-			//path1->clear();
 			tanks.at(i).path2->clear();
 		}
 		// if no path yet
@@ -197,7 +151,6 @@ void DemoApp::generatePath()
 			Ogre::RaySceneQueryResult::iterator itr = result.begin();
 
 			// if hit an object
-			//&& selectionMode==1) || selectionMode==0
 			if((itr != result.end()))
 			{
 				//Get hit location
@@ -207,7 +160,7 @@ void DemoApp::generatePath()
 				if((location.y < 0.001 && selectionMode==1) || selectionMode==0)
 				{
 					// if no start node yet
-					tanks.at(i).mCurrentState=1;
+					//tanks.at(i).mCurrentState=1;
 					//Start node is always the current position of the object
 					//if(mCurrentState[i] == 1)
 					{
@@ -224,59 +177,14 @@ void DemoApp::generatePath()
 						{
 							tanks.at(i).goalNode=pathFindingGraph->getNode(location);
 						}
-						//tB->appendText("GOAL NODE: "+std::to_string(goalNode[i])+" \n");
-						//tB->appendText("START NODE: "+std::to_string(startNode[i])+" \n");
 						// check that goal node is not the same as start node
 						if(tanks.at(i).goalNode != tanks.at(i).startNode)
 						{
-							// try to find path from start to goal node
-							std::vector<int> path;
-							tanks.at(i).path2->clear();
-							tanks.at(i).mCurrentState = 0;
-							tanks.at(i).tankPath.clear();
-							tanks.at(i).currentNode=-1;
-							// if path exists
-							//if(mPathFinder.Dijkstra(startNode, goalNode, *pathFindingGraph, path))
-							if(mPathFinder.AStar(tanks.at(i).startNode, tanks.at(i).goalNode, *pathFindingGraph, path))
-							{
-								// draw path
-								//createPath(path1, 0.5, path, Ogre::ColourValue(1, 0, 0));
-						
-								//mPathFinder.AStar(startNode, goalNode, *pathFindingGraph, path);
-								createPath(tanks.at(i).path2, 1.0, path, Ogre::ColourValue(0, 0, 1));
-
-								// set state to path found
-								tanks.at(i).mCurrentState++;
-
-								//WIP TANK
-								//std::copy(path.begin(), path.end(), tankPath.begin());
-								for (std::vector<int>::iterator it = path.begin(); it!=path.end(); ++it)
-								{
-									tanks.at(i).tankPath.push_back(*it);
-								}
-								tanks.at(i).currentNode=0;
-								tanks.at(i).firstTime=true;
-								if(selectionMode==2)
-								{
-									tanks.at(0).tankPath=tanks.at(i).tankPath;
-									tanks.at(0).currentNode=0;
-									tanks.at(0).firstTime=true;
-								}
-							}
-							else
-							{
-								tB->appendText("COULD NOT FIND PATH \n");
-								// no path so set state to no start node
-								tanks.at(i).mCurrentState = 0;
-							}
+							findPath(i);
 						}
 						else
 						{
-							tanks.at(i).path2->clear();
-							tanks.at(i).mCurrentState = 0;
-							tanks.at(i).tankPath.clear();
-							tanks.at(i).currentNode=-1;
-							tanks.at(i).firstTime=true;
+							resetPath(i);
 						}
 					}
 				}
@@ -404,7 +312,7 @@ bool DemoApp::selectionBox()
 			mSelectionBox->setVisible(true);
 		if(controlPressed==false)
 		{
-			for(int i=1;i<TANK_LIMIT;i++)
+			for(int i=0;i<TANK_LIMIT;i++)
 			{
 				tanks.at(i).selected=false;
 				tanks.at(i).tankNode->detachObject(tanks.at(i).mSelectionCircle);
@@ -418,10 +326,7 @@ bool DemoApp::selectionBox()
 		{
 			
 			tB->appendText("TANK"+std::to_string(i)+": "+std::to_string(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x)+" , "+std::to_string(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y)+"\n");
-			//if(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x > left && GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).x < right)
-			//	tB->appendText("TANK: "+std::to_string(i)+"  RIGHT+LEFT CORRECT\n");
-			//if(GetScreenspaceCoords(tankNode[i]->getPosition(),*mCamera).y > 1-top)
-			//	tB->appendText("TANK: "+std::to_string(i)+"  TOP CORRECT\n");
+
 			if(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x > left && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x < right && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y < 1-top && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y > 1-bottom)
 			{
 				tB->appendText("TANK SELECTED: "+std::to_string(i)+"\n");
@@ -445,20 +350,14 @@ Ogre::Vector2 DemoApp::GetScreenspaceCoords(const Ogre::Vector3& iPoint, const O
     Ogre:: Vector3 point = iCamera.getProjectionMatrix() * (iCamera.getViewMatrix() * iPoint);
 
     Ogre::Vector2 screenSpacePoint = Ogre::Vector2::ZERO;
-    screenSpacePoint.x = (point.x / 2.f) + 0.5f;// * mWindow->getWidth();
-    screenSpacePoint.y = (point.y / 2.f) + 0.5f;// * mWindow->getHeight();
+    screenSpacePoint.x = (point.x / 2.f) + 0.5f;
+    screenSpacePoint.y = (point.y / 2.f) + 0.5f;
 
     return screenSpacePoint;
 }
 void DemoApp::frameRenderingCamera()
 {
 	Ogre::Vector3 camPos;
-	/*if(cMode==0)
-		tB->setText("CMODE: "+std::to_string(cMode)+"\n");
-	else if(cMode==1)
-		tB->setText("CMODE: "+std::to_string(cMode)+"\n");*/
-						// Start position stored, move to next state
-	// && nextClickPath==false
 	if(mousePressedVar==true && boxTimeout>=6)
 	{
 		mSelecting = true;
@@ -475,60 +374,21 @@ void DemoApp::frameRenderingCamera()
 		Ogre::Vector3 height=camNode->getPosition();
 		camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_X)  * camX);
 		camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_Z)  * camY);
-		camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Y)  * -camZ);
+		camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Z)  * -camZ);
 		camPos=camNode->getPosition();
 		if(camZ==0)
 			camNode->setPosition(camPos.x,height.y,camPos.z);
-		//mCamera->getRealOrientation();
-		//mCamera->moveRelative( (Ogre::Vector3(0,1,1) ) * camY );
-		//mCamera->moveRelative(  );
 	}
 	else if(cMode==1)
 	{
-		//if(lookAtDest==Ogre::Vector3(0,0,0))
-		{
-			//camNode->setOrientation(Ogre::Quaternion());
-			//mCamera->setOrientation(Ogre::Quaternion());
-			//camNode->detachAllObjects();
-			//Ogre::Ray camRay;	
-			//camRay=mCamera->getCameraToViewportRay(0.5,0.5);
-			//lookAtDest = camRay.getPoint(50);
-			//lookAtDest.y=5;
-			//mCamera->lookAt((lookAtDest));
-			//camNode->lookAt(lookAtDest,Ogre::Node::TS_PARENT,Ogre::Vector3::NEGATIVE_UNIT_Z);
-		}
-		//else
-		{
-			//camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_X)  * camX);
-			//camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_Y)  * camY);
 			
-			camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Z)  * -camZ);
-			//camNode->lookAt(Ogre::Vector3(0,10,0),Ogre::Node::TS_PARENT,Ogre::Vector3::NEGATIVE_UNIT_Z);
+		camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Z)  * -camZ);
 
-			camNode->yaw(mRotationX);
-			camNode->pitch(mRotationY);
-			//camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_Z)  * camZ);
-			//camPos=camNode->getPosition();
-			//lookAtDest.z=camNode->getPosition().z;
-			//mCamera->moveRelative(Ogre::Vector3::UNIT_X * camX);
-			//mCamera->moveRelative(Ogre::Vector3::UNIT_Y * camY);
-			//mCamera->moveRelative(Ogre::Vector3::UNIT_Z * camZ);
-			//mCamera->lookAt((lookAtDest));
-		
-			//camNode->lookAt(lookAtDest,Ogre::Node::TS_WORLD,Ogre::Vector3::NEGATIVE_UNIT_Z);
-		}
+		camNode->yaw(mRotationX);
+		camNode->pitch(mRotationY);
 		camPos=camNode->getPosition();
-		mCamera->setOrientation(Ogre::Quaternion());
-		
-		//0
-		//camNode->setOrientation(Ogre::Quaternion(0,0,0,1));
+		mCamera->setOrientation(Ogre::Quaternion());		
 	}
-
-	//tB->appendText("Look At Dest: ("+std::to_string(lookAtDest.x)+")-("+std::to_string(lookAtDest.y)+")-("+std::to_string(lookAtDest.z)+")\n");
-	//tB->appendText("Cam Pos Dest: ("+std::to_string(camPos.x)+")-("+std::to_string(camPos.y)+")-("+std::to_string(camPos.z)+")\n");
-	//R=camZ*(M_PI/(double)180);
-	//mCamera->setFOVy(R);
-	//tB->setText("Selection Mode: "+std::to_string(selectionMode)+"\n");
 	if(cMode==1)
 	{
 		camX=0;

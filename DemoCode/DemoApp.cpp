@@ -22,6 +22,11 @@ DemoApp::DemoApp(void)
 	controlPressed=false;
 	mousePressedVar=false;
 	nextClickPath=false;
+
+	AllocConsole();
+	freopen("CONIN$", "r", stdin);
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
 }
 //-------------------------------------------------------------------------------------
 DemoApp::~DemoApp(void)
@@ -44,8 +49,8 @@ bool DemoApp::setup(void)
 	pathFindingGraph = new Graph;
 	//for(int i=0;i<TANK_LIMIT;i++)
 	//	mCurrentState[i] = 0;
-	for(int i=0;i<TANK_LIMIT;i++)
-		tanks.at(i).mCurrentState = 0;
+	//for(int i=0;i<TANK_LIMIT;i++)
+	//	tanks.at(i).mCurrentState = 0;
 
 	mDirection = Ogre::Vector3::ZERO;
 
