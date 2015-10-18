@@ -80,11 +80,13 @@
     <None Include="resources_d.cfg" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="DemoApp.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="NodeRecord.cpp" />
     <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
@@ -94,6 +96,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h" />

@@ -15,6 +15,12 @@ DemoApp::DemoApp(void)
 	mousePressedVar=false;
 	nextClickPath=false;
 
+	playerControl = true;
+
+	tankInfoWasOpen = false;
+	controlsWasOpen = false;
+	chatWasOpen = false;
+
 	AllocConsole();
 	freopen("CONIN$", "r", stdin);
 	freopen("CONOUT$", "w", stdout);
@@ -31,6 +37,11 @@ bool DemoApp::setup(void)
 {
 	BaseApplication::setup();
 
+	//set initial mouse position
+	OIS::MouseState &mutableMouseState = const_cast<OIS::MouseState &>(mMouse->getMouseState());
+	mutableMouseState.X.abs = mCamera->getViewport()->getActualWidth() / 2;
+	mutableMouseState.Y.abs = mCamera->getViewport()->getActualHeight() / 2;
+
 	mTrayMgr->showCursor();
 
 	pathFindingGraph = new Graph;
@@ -43,9 +54,6 @@ bool DemoApp::setup(void)
 //-------------------------------------------------------------------------------------
 void DemoApp::createScene(void)
 {
-	//mCamera->setPosition(Ogre::Vector3(0, 90, 100));
-	//mCamera->lookAt(Ogre::Vector3(0, 0, 10));
-
 	mCamera->setOrientation(Ogre::Quaternion());
 	camNode=mSceneMgr->getRootSceneNode()->createChildSceneNode("Camera");
 	camNode->setOrientation(Ogre::Quaternion());
@@ -53,8 +61,6 @@ void DemoApp::createScene(void)
 	camNode->lookAt(Ogre::Vector3(0, 10, 0),Ogre::Node::TS_PARENT,Ogre::Vector3::UNIT_Z);
 
 	camNode->attachObject(mCamera);
-
-
 
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.25, 0.25, 0.25));
  
@@ -65,9 +71,12 @@ void DemoApp::createScene(void)
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue::White);
  
+	mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8); //sky dome
+
 	mapSetup();
 
 	mWindow->setFullscreen(false,1280,720);
+	mWindow->reposition(150, 50);
 }
 bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
@@ -83,7 +92,6 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	tankMovement(evt);
 	frameRenderingCamera();
 
-
 	mTrayMgr->frameRenderingQueued(evt);
 
 	return true;
@@ -91,13 +99,14 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
  void DemoApp::createFrameListener(void)
 {
 	BaseApplication::createFrameListener();
-	tB = mTrayMgr->createTextBox(OgreBites::TL_TOPRIGHT, "InfoPanel", "Information", 500, 300);
-	//mTrayMgr->getTrayContainer(OgreBites::TL_TOPRIGHT)->hide();
+
+	createUI();
 }
 // OIS::KeyListener
 bool DemoApp::keyPressed( const OIS::KeyEvent &arg )
 {
-	camInput(arg);
+	keyInput(arg);
+
 	return true;
 }
 bool DemoApp::keyReleased( const OIS::KeyEvent &arg )

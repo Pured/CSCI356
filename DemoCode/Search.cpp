@@ -123,7 +123,6 @@ void DemoApp::findPath(int i)
 	}
 	else
 	{
-		tB->appendText("COULD NOT FIND PATH \n");
 		pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
 		// no path so set state to no start node
 		tanks.at(i).mCurrentState = 0;

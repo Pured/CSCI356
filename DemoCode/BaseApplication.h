@@ -67,7 +67,7 @@ protected:
 	OgreBites::InputContext mInputContext;
 	OgreBites::SdkTrayManager*	mTrayMgr;
 	OgreBites::SdkCameraMan* mCameraMan;     	// basic camera controller
-	OgreBites::ParamsPanel* mDetailsPanel;   	// sample details panel
+	OgreBites::ParamsPanel* tankPanel; //panel for tanks
 	bool mCursorWasVisible;						// was cursor visible before dialog appeared
 	bool mShutDown;
  

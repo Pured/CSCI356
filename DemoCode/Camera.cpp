@@ -61,8 +61,6 @@ bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 }
 bool DemoApp::quickSelect()
 {
-	//tB->setText("In QUICK SELECTED \n");
-	//tB->appendText("Selection Mode: "+std::to_string(selectionMode)+"\n");
 	// Create RaySceneQuery
 	Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
@@ -93,10 +91,8 @@ bool DemoApp::quickSelect()
 
 		for(int i=0;i<TANK_LIMIT;i++)
 		{
-			//tB->appendText("RAY NAME: "+name+"\n");
 			if(name=="Tank"+std::to_string(i))
 			{
-				//tB->appendText("TANK QUICKSELECTED: "+std::to_string(i)+"\n");
 				tanks.at(i).selected=true;
 				if(tanks.at(i).mSelectionCircle->getParentSceneNode()!=tanks.at(i).tankNode)
 					tanks.at(i).tankNode->attachObject(tanks.at(i).mSelectionCircle);
@@ -123,7 +119,6 @@ bool DemoApp::quickSelect()
 }
 void DemoApp::generatePath()
 {
-	//tB->setText("");
 	for(int j=0;j<1024;j++)
 	{
 		if(pathFindingGraph->getContent(j)==2)
@@ -141,8 +136,6 @@ void DemoApp::generatePath()
 		// if no path yet
 		else if(tanks.at(i).selected==true)
 		{
-			//tB->appendText("TANK SELECTED: "+std::to_string(i)+"\n");
-			//tB->appendText("Selection Mode: "+std::to_string(selectionMode)+"\n");
 			// Create RaySceneQuery
 			Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
@@ -215,64 +208,12 @@ bool DemoApp::WithinBounds(Ogre::Vector3 current, Ogre::Vector3 goal)
 	else
 		return false;
 }
-void DemoApp::camInput( const OIS::KeyEvent &arg )
-{
-	 switch (arg.key)
-	{
-		case OIS::KC_ESCAPE: 
-			mShutDown = true;
-			break;
-		case OIS::KC_LMENU: 
-			cMode=1;
-			mTrayMgr->hideCursor();
-			break;
-		case OIS::KC_R:
-			//lookAtDest=Ogre::Vector3(0,0,0);
-			camNode->setPosition(Ogre::Vector3(0,10,-10));
-			//mCamera->setPosition(camNode->getPosition());
-			
-			//mCamera->setOrientation(Ogre::Quaternion());
-			camNode->setOrientation(Ogre::Quaternion());
-			//camNode->lookAt(Ogre::Vector3(0,10,0),Ogre::Node::TS_PARENT,Ogre::Vector3::NEGATIVE_UNIT_Z);
-			break;
-		/*case OIS::KC_F:
-				if(selectionMode==0)
-					selectionMode++;
-				else if(selectionMode==1)
-				{
-					follower.tankNode->setVisible(true);
-					selectionMode++;
-				}
-				else if(selectionMode==2)
-				{
-					follower.tankNode->setVisible(false);
-					selectionMode=1;
-				}
-			break;*/
-		case OIS::KC_P:
-				for(int j=0;j<1024;j++)
-				{
-					printf("%i,",pathFindingGraph->getContent(j));
-					if((j+1)%32==0 && j!=0)
-						printf("\n");
-				}
-				printf("\n");
-				printf("\n");
-				break;
-		case OIS::KC_LCONTROL:
-				controlPressed=true;
-			break;
-		default:
-			break;
-	}
-}
+
 bool DemoApp::selectionBox()
 {
-	//tB->setText("In selection box");
 	// If left mouse button is down and a starting position is already stored
 	if(mMouse->getMouseState().buttonDown(OIS::MouseButtonID::MB_Left) && mSelecting)
 	{
-		//tB->setText("In selection box if");
 		float left, right, top, bottom;
 		// Get screen width and height
 		int screenWidth = mWindow->getWidth();
@@ -336,16 +277,12 @@ bool DemoApp::selectionBox()
 				tanks.at(i).path2->setVisible(false);
 			}
 		}
-		//tB->setText(std::to_string(left)+" , "+std::to_string(right)+" , "+std::to_string(1-top)+" , "+std::to_string(1-bottom)+"\n");
+
 		bool found=false;
 		for(int i=0;i<TANK_LIMIT;i++)
 		{
-			
-			//tB->appendText("TANK"+std::to_string(i)+": "+std::to_string(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x)+" , "+std::to_string(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y)+"\n");
-
 			if(GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x > left && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).x < right && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y < 1-top && GetScreenspaceCoords(tanks.at(i).tankNode->getPosition(),*mCamera).y > 1-bottom)
 			{
-				//tB->appendText("TANK SELECTED: "+std::to_string(i)+"\n");
 				tanks.at(i).selected=true;
 				if(tanks.at(i).mSelectionCircle->getParentSceneNode()!=tanks.at(i).tankNode)
 					tanks.at(i).tankNode->attachObject(tanks.at(i).mSelectionCircle);
@@ -374,9 +311,7 @@ Ogre::Vector2 DemoApp::GetScreenspaceCoords(const Ogre::Vector3& iPoint, const O
 void DemoApp::frameRenderingCamera()
 {
 	Ogre::Vector3 camPos;
-	tB->setText("Controls \n Move mouse to edge of screen to move camera \n Hold Alt - and move mouse to rotate camera \n Scroll to zoom \n left click to select, hold to use selection box \n right click to move \n");
-	if(selectionMode==1)
-		tB->appendText("Selection Mode ");
+
 	if(mousePressedVar==true && boxTimeout>=6 && selectionMode!=2)
 	{
 		mSelecting = true;

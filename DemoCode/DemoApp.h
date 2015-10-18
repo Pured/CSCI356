@@ -9,6 +9,7 @@
 #include<vector>;
 #define M_PI           3.14159265358979323846  /* pi */
 //#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
+
 class DemoApp : public BaseApplication
 {
 public:
@@ -28,6 +29,10 @@ protected:
     virtual bool mouseMoved( const OIS::MouseEvent &arg );
     virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 	virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+
+	//UI functions
+	void createUI();
+	void toggleOtherPanels();
  
 	Ogre::Real mRotate;          // The rotate constant
 	Ogre::Real mMove;            // The movement constant
@@ -35,11 +40,8 @@ protected:
 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
 
 private:
-
-	//Contains debug TextBox variables
-	OgreBites::TextBox* tB;
 	//SDKtrays functions
-
+	
 	int TANK_LIMIT;
 
 	virtual void createFrameListener(void);
@@ -61,7 +63,6 @@ private:
 
 	//Camera Functions//
 	void frameRenderingCamera();
-	void camInput(const OIS::KeyEvent &);
 	void camMovement( const OIS::MouseEvent & );
 	void camPressed( const OIS::MouseEvent &, OIS::MouseButtonID  );
 	bool DemoApp::WithinBounds(Ogre::Vector3 , Ogre::Vector3 );
@@ -84,7 +85,16 @@ private:
 	Ogre::Vector2 DemoApp::GetScreenspaceCoords(const Ogre::Vector3& , const Ogre::Camera& );
 	bool DemoApp::quickSelect();
 
-	//TankMovementAI Variables//
+	//Keyboard Inputs
+	void keyInput(const OIS::KeyEvent &);
+
+	//UI Variables
+	OgreBites::TextBox *controlsUI, *scoreUI, *chatBox;
+	bool tankInfoWasOpen, controlsWasOpen, chatWasOpen;
+
+	//AI Variables
+	bool playerControl;
+
 	//Lab Variables
 	class tank {
 	public:
@@ -144,6 +154,11 @@ private:
 	void createPath(Ogre::ManualObject* line, float height, std::vector<int>& path, Ogre::ColourValue& colour);
 	void generatePath();
 	bool WithinRotationBounds(tank );
+
+	//AI functions
+	void think(/*tank t*/); //AI does its own things
+	void shutDown(/*tank t*/); //AI stops
+	void changeState(int x, tank t); //x = state to change to
 
 	//Selection BillBoard variables
 	//Ogre::BillboardSet* mHealthBar[TANK_LIMIT];
