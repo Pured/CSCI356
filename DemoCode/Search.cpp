@@ -204,17 +204,21 @@ void DemoApp::respawnTank(int i)
 			if(tanks.at(i).team==2)
 			{
 				//printf("%i team 2 \n",i);
-				node=((rand()%32)*32)+(32-(rand() % 3+1));
+				node=((rand()%40 + 1)*42)+40;//(32-(rand() % 3+1));
 				position=pathFindingGraph->getPosition(node);
 			}
 			else
 			{
 				//printf("%i team 1 \n",i);
-				node=((rand()%32)*32)+((rand() % 3));
+				node=((rand()%40+1)*42)+1;//+((rand() % 3));
 				position=pathFindingGraph->getPosition(node);
 			}
 			position.y = 0.7;
 		}while(pathFindingGraph->getContent(node)==2);
+
+		if(tanks.at(i).team==2)
+			tanks.at(i).tankNode->yaw(Ogre::Degree(180));
+
 		pathFindingGraph->setContent(node,2);
 		tanks.at(i).tankNode->setPosition(position);	
 		tanks.at(i).health=100;

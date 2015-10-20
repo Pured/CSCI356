@@ -16,7 +16,7 @@ void DemoApp::mapSetup()
 
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
 	Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 
-		320, 320, 20, 20, true, 1, 2.5, 2.5, Ogre::Vector3::UNIT_Z);
+		420, 420, 20, 20, true, 1, 2.5, 2.5, Ogre::Vector3::UNIT_Z);
 
 	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
 	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);

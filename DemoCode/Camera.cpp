@@ -250,10 +250,10 @@ void DemoApp::camInput( const OIS::KeyEvent &arg )
 				}
 			break;*/
 		case OIS::KC_P:
-				for(int j=0;j<1024;j++)
+				for(int j=0;j<1764;j++)
 				{
 					printf("%i,",pathFindingGraph->getContent(j));
-					if((j+1)%32==0 && j!=0)
+					if((j+1)%42==0 && j!=0)
 						printf("\n");
 				}
 				printf("\n");
