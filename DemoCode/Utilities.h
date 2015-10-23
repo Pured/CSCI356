@@ -54,6 +54,10 @@ public:
         btVector3 pos = worldTrans.getOrigin();
         mVisibleobj->setPosition(pos.x(), pos.y(), pos.z());
     }
+
+	Ogre::SceneNode* getNode(){
+		return mVisibleobj;
+	}
  
 protected:
     Ogre::SceneNode *mVisibleobj;

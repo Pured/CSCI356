@@ -15,6 +15,7 @@ public:
 	void update(float deltaTime);
 	btRigidBody* createRigidBody(float mass, const btTransform& startTransform, btCollisionShape* collisionShape, Ogre::SceneNode* node);
 	void shootRay(const btVector3 &rayFromWorld, const btVector3 &rayToWorld, const btVector3 &impulse);
+	void destroyRigidBody(btRigidBody* rigidBody);
 
 private:
 	btDefaultCollisionConfiguration*		mCollisionConfiguration;

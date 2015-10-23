@@ -129,3 +129,21 @@ void PhysicsEngine::shootRay(const btVector3 &rayFromWorld, const btVector3 &ray
 		}
 	}
 }
+
+void PhysicsEngine::destroyRigidBody(btRigidBody* rigidBody)
+{
+	// Get the collision shape
+	btCollisionShape* shape = rigidBody->getCollisionShape();
+
+	// Remove the collision shape from the list of collision objects
+	mCollisionShapes.remove(shape);
+
+	// Remove the rigid body from collision and rigidbody computations
+	mDynamicsWorld->removeCollisionObject(rigidBody);
+	mDynamicsWorld->removeRigidBody(rigidBody);
+
+	// Delete the objects
+	delete shape;
+	delete static_cast<MyMotionState*>(rigidBody->getMotionState());
+	delete rigidBody;
+}

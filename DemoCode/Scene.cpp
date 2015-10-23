@@ -19,9 +19,20 @@ void DemoApp::mapSetup()
 		420, 420, 20, 20, true, 1, 2.5, 2.5, Ogre::Vector3::UNIT_Z);
 
 	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
-	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+	//mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
 	entGround->setMaterialName("Examples/GrassFloor");
 	entGround->setCastShadows(false);
+
+	// Create the ground node
+	mGroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mGroundNode->attachObject(entGround);
+	
+	// Creation of the ground rigidbody for collision detection of projectiles
+	btBoxShape* groundShape = new btBoxShape(btVector3(420.0f, 5.0f, 420.0f));
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(0, -5, 0));
+	btRigidBody* groundRigidBody = mPhysicsEngine->createRigidBody(0.0f, groundTransform, groundShape, mGroundNode);
 
 	// go through the graph
 	// if a node is blocked, display a cube on that grid location
@@ -51,19 +62,23 @@ void DemoApp::mapSetup()
 			myNode->translate(position);
 		}
 	}
-	for(int i=0;i<TANK_LIMIT;i++)
+
+	for (int i = 0; i < TANK_LIMIT; i++)
 	{
 		//Creates a new tank
 		createTank(i);
 		//Spawns the tank in the map based on team
 		respawnTank(i);
 	}
-	for(int j=0;j<1024;j++)
+
+	for (int j = 0; j < 1024; j++)
 	{
 		printf("%i,",pathFindingGraph->getContent(j));
-		if((j+1)%32==0 && j!=0)
+
+		if ((j + 1) % 32 == 0 && j != 0)
 			printf("\n");
 	}
+
 	printf("\n");
 	printf("\n");
 }
