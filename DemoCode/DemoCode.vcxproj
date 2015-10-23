@@ -84,6 +84,7 @@
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="playerControls.cpp" />
     <ClCompile Include="DemoApp.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="KeyboardInput.cpp" />

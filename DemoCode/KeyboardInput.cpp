@@ -8,7 +8,7 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 		switch (arg.key)
 		{
 			case OIS::KC_A: //switch between AI and player control
-				if(playerControl == true)
+				/*if(playerControl == true)
 				{
 					playerControl = false;
 					think(); //turn on AI
@@ -17,7 +17,17 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				{
 					playerControl = true;
 					shutDown(); //turn off AI
-				}
+				}*/
+				//Switch selected tank to player controlled (or back to AI)
+				if(playerControlled == -1)//if none controlled
+				{
+					for(int i=0;i<TANK_LIMIT;i++)//find selected tank/s
+					{
+						if(tanks.at(i).selected==true)//controll one (if multiple selected, control last of selected)
+							playerControlled = i;
+					}
+				}else //control none
+					playerControlled = -1;
 
 				break;
 			case OIS::KC_C: //show/hide controls

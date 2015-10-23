@@ -149,57 +149,91 @@ void DemoApp::resetPath(int i)
 
 void DemoApp::createTank(int i)
 {
-	tank tmp;
+		tank tmp;
 		
-	tmp.path2 = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
-	tmp.path2->clear();
-	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(tmp.path2);
+		tmp.path2 = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
+		tmp.path2->clear();
+		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(tmp.path2);
+		if(i<TANK_LIMIT/2)
+		{
+			tmp.team=1;
+		}
+		else
+		{
+			tmp.team=2;
+		}
+		/*Tank Stuff*/
+		std::string entityName = "Tank"+std::to_string(i);
+		std::string mesh;
+		std::string mat;
+		double size;
+		if(tmp.team==1)//change mesh/material depending on team (challenger vs leapard)
+		{
+			mesh = "ch";
+			mat = "ch_";
+			size = 0.055;
+		}else
+		{
+			mesh = "lp";
+			mat = "lp_";
+			size = 0.07;
+		}
 
-	if(i < TANK_LIMIT / 2)
-	{
-		tmp.team=1;
-	}
-	else
-	{
-		tmp.team=2;
-	}
+		// Create tank body entity
+		Ogre::Entity* tankBody = mSceneMgr->createEntity(entityName, mesh+"body.mesh");
+		tankBody->setMaterialName(mat+"tank_material");
 
-	/*Tank Stuff*/
-	std::string entityName = "Tank"+std::to_string(i);
+		// Create tank turret entity
+		Ogre::Entity* tankTurret = mSceneMgr->createEntity(entityName+"Turret", mesh+"turret.mesh");
+		tankTurret->setMaterialName(mat+"tank_material");
 
-	//Create entity
-	Ogre::Entity* tankEntity = mSceneMgr->createEntity(entityName, "fish.mesh");
+		// Create tank barrel entity
+		Ogre::Entity* tankBarrel = mSceneMgr->createEntity(entityName+"Barrel", mesh+"barrel.mesh");
+		tankBarrel->setMaterialName(mat+"tank_material");
 
-	//Attach entity to scene node
-	tmp.tankNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	Ogre::SceneNode * rePos=tmp.tankNode->createChildSceneNode();
-	rePos->yaw(Ogre::Degree(180));
-	rePos->attachObject(tankEntity);
+		// Attach tank body to scene node
+		tmp.tankNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+		Ogre::SceneNode * rePos=tmp.tankNode->createChildSceneNode();
+		rePos->yaw(Ogre::Degree(180));
+		rePos->setScale(size, size, size);
+		rePos->attachObject(tankBody);
 
-	//Create a BillboardSet to represent a health bar and set its properties
-	tmp.mHealthBar = mSceneMgr->createBillboardSet("Healthbar1"+std::to_string(i));
-	tmp.mHealthBar->setCastShadows(false);
-	tmp.mHealthBar->setDefaultDimensions(5, 1);
-	tmp.mHealthBar->setMaterialName("myMaterial/HealthBar");
+		// Attach tank turret to tank body
+		tmp.turretNode = rePos->createChildSceneNode();
+		tmp.turretNode->attachObject(tankTurret);
+		// Move it above tank body
+		tmp.turretNode->translate(0, 3, 0);
 
-	//Create a billboard for the health bar BillboardSet
-	mHealthBarBB = tmp.mHealthBar->createBillboard(Ogre::Vector3(0, 5, 0));
+		// Attach tank barrel to tank turret
+		tmp.barrelNode = tmp.turretNode->createChildSceneNode();
+		tmp.barrelNode->attachObject(tankBarrel);
+		// Move it to the appropriate position on the turret
+		tmp.barrelNode->translate(-30, 10, 0);
 
-	//Create a BillboardSet for a selection circle and set its properties
-	tmp.mSelectionCircle = mSceneMgr->createBillboardSet("SelectionCircle"+std::to_string(i));
-	tmp.mSelectionCircle->setCastShadows(false);
-	tmp.mSelectionCircle->setDefaultDimensions(10, 10);
-	tmp.mSelectionCircle->setMaterialName("myMaterial/SelectionCircle");
-	tmp.mSelectionCircle->setBillboardType(Ogre::BillboardType::BBT_PERPENDICULAR_COMMON);
-	tmp.mSelectionCircle->setCommonDirection(Ogre::Vector3(0, 1, 0));
-	tmp.mSelectionCircle->setCommonUpVector(Ogre::Vector3(0, 0, -1));
+		// Create a BillboardSet to represent a health bar and set its properties
+		tmp.mHealthBar = mSceneMgr->createBillboardSet("Healthbar1"+std::to_string(i));
+		tmp.mHealthBar->setCastShadows(false);
+		tmp.mHealthBar->setDefaultDimensions(5, 1);
+		tmp.mHealthBar->setMaterialName("myMaterial/HealthBar");
 
-	//Create a billboard for the selection circle BillboardSet
-	mSelectionCircleBB = tmp.mSelectionCircle->createBillboard(Ogre::Vector3(0, 0.05, 0));
-	mSelectionCircleBB->setTexcoordRect(0.0, 0.0, 1.0, 1.0);
+		// Create a billboard for the health bar BillboardSet
+		mHealthBarBB = tmp.mHealthBar->createBillboard(Ogre::Vector3(0, 5, 0));
 
-	tmp.originalRoll = tmp.tankNode->getOrientation().getRoll();
-	tanks.push_back(tmp);
+		// Create a BillboardSet for a selection circle and set its properties
+		tmp.mSelectionCircle = mSceneMgr->createBillboardSet("SelectionCircle"+std::to_string(i));
+		tmp.mSelectionCircle->setCastShadows(false);
+		tmp.mSelectionCircle->setDefaultDimensions(12, 10);
+		tmp.mSelectionCircle->setMaterialName("myMaterial/SelectionCircle");
+		tmp.mSelectionCircle->setBillboardType(Ogre::BillboardType::BBT_PERPENDICULAR_COMMON);
+		tmp.mSelectionCircle->setCommonDirection(Ogre::Vector3(0, 1, 0));
+		tmp.mSelectionCircle->setCommonUpVector(Ogre::Vector3(0, 0, -1));
+
+		// Create a billboard for the selection circle BillboardSet
+		mSelectionCircleBB = tmp.mSelectionCircle->createBillboard(Ogre::Vector3(0, 0.01, 0));
+		mSelectionCircleBB->setTexcoordRect(0.0, 0.0, 1.0, 1.0);
+
+		tmp.originalRoll=tmp.tankNode->getOrientation().getRoll();
+		tanks.push_back(tmp);
 }
 void DemoApp::respawnTank(int i)
 {

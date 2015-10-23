@@ -15,7 +15,8 @@ DemoApp::DemoApp(void)
 	mousePressedVar = false;
 	nextClickPath = false;
 
-	playerControl = true;
+	//playerControl = true;
+	playerControlled = -1;
 
 	tankInfoWasOpen = true;
 	controlsWasOpen = false;
@@ -97,6 +98,7 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	mMouse->capture();
 	tankMovement(evt);
 	frameRenderingCamera();
+	playerControlsQueued();
 
 	// Delete the shots once they go more than MAX_SHOTS
 	for(int i = 0; i < MAX_SHOTS; i++)

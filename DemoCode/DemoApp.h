@@ -112,7 +112,8 @@ class DemoApp : public BaseApplication
 		bool tankInfoWasOpen, controlsWasOpen, chatWasOpen;
 
 		//AI Variables
-		bool playerControl; //-1 = AI, 0+ = tank ID
+		//bool playerControl; //-1 = AI, 0+ = tank ID
+		int playerControlled;
 
 		// Lab Variables
 		class tank 
@@ -127,6 +128,8 @@ class DemoApp : public BaseApplication
 
 				Ogre::ManualObject* path2;
 				Ogre::SceneNode* tankNode;
+				Ogre::SceneNode* turretNode;
+				Ogre::SceneNode* barrelNode;
 				std::vector<int> tankPath;
 				int currentNode;
 				Ogre::Real mRotProgress; 
@@ -186,6 +189,9 @@ class DemoApp : public BaseApplication
 		Ogre::Billboard* mHealthBarBB;
 		//Ogre::BillboardSet* mSelectionCircle[TANK_LIMIT];
 		Ogre::Billboard* mSelectionCircleBB;
+
+		//Controls Functions//
+		void playerControlsQueued();
 };
  
 #endif // #ifndef __DemoApp_h_
