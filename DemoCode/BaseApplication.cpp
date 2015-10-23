@@ -139,6 +139,7 @@ void BaseApplication::createFrameListener(void)
 //-------------------------------------------------------------------------------------
 void BaseApplication::destroyScene(void)
 {
+
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::createViewports(void)
@@ -148,8 +149,7 @@ void BaseApplication::createViewports(void)
 	vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
  
 	// Alter the camera aspect ratio to match the viewport
-	mCamera->setAspectRatio(
-		Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+	mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::setupResources(void)
@@ -230,7 +230,9 @@ bool BaseApplication::setup(void)
 	setupResources();
  
 	bool carryOn = configure();
-	if (!carryOn) return false;
+
+	if(!carryOn)
+		return false;
  
 	chooseSceneManager();
 	createCamera();
@@ -274,7 +276,8 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 //-------------------------------------------------------------------------------------
 bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
 {
-	if (mTrayMgr->isDialogVisible()) return true;   // don't process any more keys if dialog is up
+	if(mTrayMgr->isDialogVisible())
+		return true; //don't process any more keys if dialog is up
  
 	if (arg.key == OIS::KC_F)   // toggle visibility of advanced frame stats
 	{
@@ -290,10 +293,12 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
 		case Ogre::PM_SOLID:
 			newVal = "Wireframe";
 			pm = Ogre::PM_WIREFRAME;
+
 			break;
 		case Ogre::PM_WIREFRAME:
 			newVal = "Points";
 			pm = Ogre::PM_POINTS;
+
 			break;
 		default:
 			newVal = "Solid";
@@ -302,11 +307,11 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
  
 		mCamera->setPolygonMode(pm);
 	}
-	else if(arg.key == OIS::KC_F5)   // refresh all textures
+	else if(arg.key == OIS::KC_F5) //refresh all textures
 	{
 		Ogre::TextureManager::getSingleton().reloadAll();
 	}
-	else if (arg.key == OIS::KC_SYSRQ)   // take a screenshot
+	else if (arg.key == OIS::KC_SYSRQ) //take a screenshot
 	{
 		mWindow->writeContentsToTimestampedFile("screenshot", ".jpg");
 	}
@@ -316,33 +321,44 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
 	}
  
 	mCameraMan->injectKeyDown(arg);
+
 	return true;
 }
  
 bool BaseApplication::keyReleased( const OIS::KeyEvent &arg )
 {
 	mCameraMan->injectKeyUp(arg);
+
 	return true;
 }
  
 bool BaseApplication::mouseMoved( const OIS::MouseEvent &arg )
 {
-    if (mTrayMgr->injectMouseMove(arg)) return true;
+    if(mTrayMgr->injectMouseMove(arg))
+		return true;
+
 	mCameraMan->injectMouseMove(arg);
+
 	return true;
 }
  
 bool BaseApplication::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
-    if (mTrayMgr->injectMouseDown(arg, id)) return true;
+    if(mTrayMgr->injectMouseDown(arg, id))
+		return true;
+
 	mCameraMan->injectMouseDown(arg, id);
+
 	return true;
 }
  
 bool BaseApplication::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
-    if (mTrayMgr->injectMouseUp(arg, id)) return true;
+    if(mTrayMgr->injectMouseUp(arg, id))
+		return true;
+
 	mCameraMan->injectMouseUp(arg, id);
+
 	return true;
 }
  
@@ -351,9 +367,11 @@ void BaseApplication::windowResized(Ogre::RenderWindow* rw)
 {
 	unsigned int width, height, depth;
 	int left, top;
+
 	rw->getMetrics(width, height, depth, left, top);
  
 	const OIS::MouseState &ms = mMouse->getMouseState();
+
 	ms.width = width;
 	ms.height = height;
 }
@@ -361,13 +379,13 @@ void BaseApplication::windowResized(Ogre::RenderWindow* rw)
 //Unattach OIS before window shutdown (very important under Linux)
 void BaseApplication::windowClosed(Ogre::RenderWindow* rw)
 {
-	//Only close for window that created OIS (the main window in these demos)
-	if( rw == mWindow )
+	//only close for window that created OIS (the main window in these demos)
+	if(rw == mWindow)
 	{
-		if( mInputManager )
+		if(mInputManager)
 		{
-			mInputManager->destroyInputObject( mMouse );
-			mInputManager->destroyInputObject( mKeyboard );
+			mInputManager->destroyInputObject(mMouse);
+			mInputManager->destroyInputObject(mKeyboard);
  
 			OIS::InputManager::destroyInputSystem(mInputManager);
 			mInputManager = 0;

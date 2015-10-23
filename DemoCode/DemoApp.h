@@ -40,8 +40,6 @@ protected:
 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
 
 private:
-	//SDKtrays functions
-	
 	int TANK_LIMIT;
 
 	virtual void createFrameListener(void);
@@ -63,6 +61,7 @@ private:
 
 	//Camera Functions//
 	void frameRenderingCamera();
+	void camInput(const OIS::KeyEvent &);
 	void camMovement( const OIS::MouseEvent & );
 	void camPressed( const OIS::MouseEvent &, OIS::MouseButtonID  );
 	bool DemoApp::WithinBounds(Ogre::Vector3 , Ogre::Vector3 );
@@ -93,7 +92,7 @@ private:
 	bool tankInfoWasOpen, controlsWasOpen, chatWasOpen;
 
 	//AI Variables
-	bool playerControl;
+	bool playerControl; //-1 = AI, 0+ = tank ID
 
 	//Lab Variables
 	class tank {

@@ -17,7 +17,7 @@ DemoApp::DemoApp(void)
 
 	playerControl = true;
 
-	tankInfoWasOpen = false;
+	tankInfoWasOpen = true;
 	controlsWasOpen = false;
 	chatWasOpen = false;
 
@@ -78,6 +78,7 @@ void DemoApp::createScene(void)
 	mWindow->setFullscreen(false,1280,720);
 	mWindow->reposition(150, 50);
 }
+
 bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
     if(mWindow->isClosed())
@@ -86,7 +87,7 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	if(mShutDown)
 		return false;
  
-	//Need to capture/update each device
+	//need to capture/update each device
 	mKeyboard->capture();
 	mMouse->capture();
 	tankMovement(evt);
@@ -109,6 +110,7 @@ bool DemoApp::keyPressed( const OIS::KeyEvent &arg )
 
 	return true;
 }
+
 bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 {
 	BaseApplication::keyReleased(arg);
@@ -116,12 +118,14 @@ bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 	switch (arg.key)
 	{
 		case OIS::KC_LMENU: 
-			cMode=0;
-			lookAtDest=(0,0,0);
+			cMode = 0;
+			lookAtDest = (0,0,0);
 			mTrayMgr->showCursor();
+
 			break;
 		case::OIS::KC_LCONTROL:
 			controlPressed=false;
+
 			break;
 	}
 	return true;
@@ -131,7 +135,9 @@ bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 bool DemoApp::mouseMoved( const OIS::MouseEvent &arg )
 {
 	if (mTrayMgr->injectMouseMove(arg)) return true;
+
 	camMovement(arg);
+
 	return true;
 }
 
