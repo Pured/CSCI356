@@ -21,7 +21,6 @@ void DemoApp::camMovement( const OIS::MouseEvent &arg )
 	}
 	else if(cMode==1)
 	{
-		mRotationX = Ogre::Degree(-mMouse->getMouseState().X.rel * 0.13);
 		mRotationY = Ogre::Degree(-mMouse->getMouseState().Y.rel * 0.13);
 	}
 	camZ = arg.state.Z.rel*-0.05;

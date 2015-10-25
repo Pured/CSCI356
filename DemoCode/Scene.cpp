@@ -40,7 +40,7 @@ void DemoApp::mapSetup()
 	{
 		int contents = pathFindingGraph->getContent(nodeNumber);
 
-		if(contents)
+		if(contents == 1) //wall
 		{
 			// Create unique name
 			std::ostringstream oss;
@@ -54,12 +54,24 @@ void DemoApp::mapSetup()
 			// Attach entity to scene node
 			Ogre::SceneNode* myNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 			myNode->attachObject(cube);
-			myNode->scale(0.1, 0.1, 0.1);
+			myNode->scale(0.1, 0.05, 0.1);
 			
 			// Place object at appropriate position
 			Ogre::Vector3 position = pathFindingGraph->getPosition(nodeNumber);
-			position.y = 5;
+			position.y = 2.5;
 			myNode->translate(position);
+		}
+		else if(contents == 3) //hp collectible
+		{
+			Collectible temp(nodeNumber, contents);
+
+			collectibles.push_back(temp);
+		}
+		else if(contents == 4) //trophy
+		{
+			Collectible temp(nodeNumber, contents);
+
+			collectibles.push_back(temp);
 		}
 	}
 

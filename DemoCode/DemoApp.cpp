@@ -15,12 +15,14 @@ DemoApp::DemoApp(void)
 	mousePressedVar = false;
 	nextClickPath = false;
 
-	//playerControl = true;
-	playerControlled = -1;
+	playerControlled = -1; //-1 = AI, 0+ = tankID
+	prevPlayerControlled = -1;
 
 	tankInfoWasOpen = true;
-	controlsWasOpen = false;
+	controlsWasOpen = true;
 	chatWasOpen = false;
+
+	visibleCollectibles = NUMCOLLECTIBLES;
 
 	AllocConsole();
 	freopen("CONIN$", "r", stdin);
@@ -118,6 +120,10 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 			}
 		}
 	}
+
+	for(int i = 0; i < tanks.size(); i++) //loop through all tanks
+		if(i != playerControlled) //if the tank isn't player-controlled
+			think(tanks.at(i)); //run AI for tank
 
 	mTrayMgr->frameRenderingQueued(evt);
 

@@ -60,16 +60,16 @@ protected:
 	Ogre::String mPluginsCfg;
 
 	Ogre::Viewport* vp;
-
-	Ogre::OverlaySystem *mOverlaySystem;
  
 	// OgreBites
 	OgreBites::InputContext mInputContext;
 	OgreBites::SdkTrayManager*	mTrayMgr;
 	OgreBites::SdkCameraMan* mCameraMan;     	// basic camera controller
-	OgreBites::ParamsPanel* tankPanel; //panel for tanks
 	bool mCursorWasVisible;						// was cursor visible before dialog appeared
 	bool mShutDown;
+
+	Ogre::OverlaySystem *mOverlaySystem;
+	OgreBites::ParamsPanel *tankPanel; //panel for tanks
  
 	//OIS Input devices
 	OIS::InputManager* mInputManager;
