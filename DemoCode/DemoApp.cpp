@@ -51,6 +51,10 @@ DemoApp::~DemoApp(void)
 {
 	if (pathFindingGraph)
 		delete pathFindingGraph;
+
+	if (mPhysicsEngine)
+		delete mPhysicsEngine;
+
 	soundEngine->drop(); // delete engine
 }
 //-------------------------------------------------------------------------------------
@@ -371,6 +375,35 @@ void DemoApp::clearShots(btRigidBody* shot)
 
 	// Destroy the rigidbody from the physics system
 	mPhysicsEngine->destroyRigidBody(shot);
+}
+//-------------------------------------------------------------------------------------
+void DemoApp::fire(tank t, tank ta, const Ogre::FrameEvent& evt)
+{
+	// Calculate the ray trace bend
+	findXY(posVec.x, posVec.y, evt, THETA);
+
+	//std::cout << std::endl << posVec.x << " " << posVec.y << "\t" << count++ << std::endl << std::endl;
+
+	// Make it into a ray
+	Ogre::Ray shotRay(posVec, oriVec);
+	Ogre::RaySceneQuery *mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
+
+	// Set ray
+	mRaySceneQuery->setRay(shotRay);
+
+	Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
+	Ogre::RaySceneQueryResult::iterator itr = result.begin();
+
+	if (itr != result.end())
+	{
+		Ogre::Vector3 location = shotRay.getPoint(itr->distance);
+	}
+}
+//-------------------------------------------------------------------------------------
+void DemoApp::findXY(Ogre::Real& x, Ogre::Real& y, const Ogre::FrameEvent& evt, double theta)
+{
+	x = (SHOT_VELOCITY * evt.timeSinceLastFrame * cos(theta));
+	y = (SHOT_VELOCITY * evt.timeSinceLastFrame * sin(theta)) - ((1/2) * (pow((SHOT_GRAVITY * evt.timeSinceLastFrame), 2)));
 }
 //-------------------------------------------------------------------------------------
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

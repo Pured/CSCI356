@@ -110,8 +110,10 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 
 				break;
 			case OIS::KC_SPACE: //hold to charge shooting power
-				//tank shooting code
-
+				for (int i = 0; i < tanks.size(); i++)
+					if (tanks.at(i).selected == true)
+						if (isEnemyVisible(tanks.at(i)) == true)
+							fight(tanks.at(i));
 				break;
 			case OIS::KC_EQUALS: //spawn another tank
 				if(TANK_LIMIT < 10 && mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->isVisible() == false) //hard limit of tanks allowed

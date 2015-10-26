@@ -13,7 +13,10 @@
 //#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
 
 const int MAX_SHOTS = 10;
-const int SHOT_VELOCITY = 100.0f;
+const double SHOT_VELOCITY = 100.0f;
+const double SHOT_GRAVITY = 5.0f;
+const int SHOT_RANGE = 15;
+const int SHOT_DAMAGE = 10;
 const int HP_SPAWNTIME = 60;
 const int TROPHY_SPAWNTIME = 30;
 const int NUMCOLLECTIBLES = 3;
@@ -65,6 +68,13 @@ class DemoApp : public BaseApplication
 		btVector3 shotOrigin;
 		void clearShots(btRigidBody* shot);
 		int mTotalShots;
+
+		// Shot variables
+		double THETA;
+		double DISTANCE;
+		Ogre::Vector3 posVec;
+		Ogre::Vector3 posVec2;
+		Ogre::Vector3 oriVec;
 
 		int TANK_LIMIT;
 
@@ -177,27 +187,34 @@ class DemoApp : public BaseApplication
 				Ogre::BillboardSet* mSelectionCircle;
 				Ogre::Radian originalRoll;
 
+				int tankInVec;
+
 				tank *enemy;
 
 				tank()
 				{
-					score=0;
-					currentState=-1; //AI state
-					selected=false;
-					firstTime=true;
-					mRotProgress=0;
-					currentNode=-1;
-					mCurrentState=0;
-					team=-1;
-					health=-1;
+					score = 0;
+					currentState = -1; //AI state
+					selected = false;
+					firstTime = true;
+					mRotProgress = 0;
+					currentNode = -1;
+					mCurrentState = 0;
+					team = -1;
+					health = -1;
 					enemy = NULL;
 					mTurretRotate = 0;
 					mBarrelRotate = 0;
 					mBarrelPitch = 0;
+					tankInVec = 0;
 				}
 		};
 
 		std::vector<tank> tanks;
+
+		void fire(tank t, tank ta, const Ogre::FrameEvent& evt);
+		void findXY(Ogre::Real& x, Ogre::Real& y, const Ogre::FrameEvent& evt, double theta);
+
 		/*int mCurrentState[TANK_LIMIT];
 		int startNode[TANK_LIMIT];
 		int goalNode[TANK_LIMIT];

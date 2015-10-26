@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DemoApp.h"
-
+//-------------------------------------------------------------------------------------
 void DemoApp::think(tank t)
 {
 	if(t.currentState == -1) //if idle, decide what to do
@@ -50,12 +50,12 @@ void DemoApp::think(tank t)
 			changeState(2, t); //attack enemy
 	}
 }
-
+//-------------------------------------------------------------------------------------
 void DemoApp::shutDown(tank t)
 {
 	t.currentState = -2; //the tank is player controlled
 }
-
+//-------------------------------------------------------------------------------------
 void DemoApp::changeState(int x, tank t)
 {
 	switch(x)
@@ -95,30 +95,59 @@ void DemoApp::changeState(int x, tank t)
 			break;
 	}
 }
-
+//-------------------------------------------------------------------------------------
 bool DemoApp::isEnemyVisible(tank t)
 {
-	//check if an enemy is visible
+	for (int i = 0; i < tanks.size(); i++)
+	{
+		if (t.selected == true)
+		{
+			if ((tanks.at(i).tankNode->getPosition().x - t.tankNode->getPosition().x) <= SHOT_RANGE)
+			{
+				if (tanks.at(i).team == 2)
+				{
+					return true;
+				}
+			}
+		}
+	}
 
-	return false; //CHANGE THIS!
+	return false;
 }
-
+//-------------------------------------------------------------------------------------
 DemoApp::tank DemoApp::getVisibleEnemy(tank t)
 {
 	tank e;
 
-	//find enemy tank;
+	for (int i = 0; i < tanks.size(); i++)
+	{
+		if (t.selected == true)
+		{
+			if ((tanks.at(i).tankNode->getPosition().x - t.tankNode->getPosition().x) <= SHOT_RANGE)
+			{
+				if (tanks.at(i).team == 2)
+				{
+					tanks.at(i).tankInVec = i;
+					e = tanks.at(i);
+					break;
+				}
+			}
+		}
+	}
 
 	return e; //return the enemy tank found
 }
-
+//-------------------------------------------------------------------------------------
 void DemoApp::fight(tank t)
 {
-	//aim for enemy tank
-
-	//shoot enemy tank
+	// Shoot enemy tank
+	if (isEnemyVisible(t) == true)
+	{
+		tank e = getVisibleEnemy(t); 
+		tanks.at(e.tankInVec).health -= SHOT_DAMAGE;
+	}
 }
-
+//-------------------------------------------------------------------------------------
 void DemoApp::collectCollectible(tank t)
 {
 	int item = -1;
