@@ -22,6 +22,7 @@ DemoApp::DemoApp(void)
 	controlsWasOpen = true;
 	chatWasOpen = false;
 
+<<<<<<< HEAD
 	TANK_LIMIT = 4;
 
 	namesAllocated = 0;
@@ -37,6 +38,8 @@ DemoApp::DemoApp(void)
 	nameList[8] = "JARV";
 	nameList[9] = "VLAD";
 
+=======
+>>>>>>> origin/master
 	visibleCollectibles = NUMCOLLECTIBLES;
 
 	AllocConsole();

@@ -92,6 +92,7 @@ void DemoApp::updateScoreboard()
 	Ogre::DisplayString tempString;
 	char filler = ' ';
 
+<<<<<<< HEAD
 	scoreUI->setText("\n\t\t\t\tChallenger Team\t\t\t\t\t\t\t\t\tLeopard Team\n\n\n\n"); //flushes the scoreboard
 
 	for(int i = 0; i < tanks.size(); i++) //get every tank's name and score
@@ -111,9 +112,27 @@ void DemoApp::updateScoreboard()
 		}
 
 		tempSS.str("");
+=======
+	scoreUI->setText("\n\t\t\t\tChallenger Team\t\t\t\t\t\t\t\t\tLeopard Team\n\n\n"); //flushes the scoreboard
+
+	for(int i = 0; i < tanks.size(); i++) //get every tank's name and score
+	{
+		tempSS << "Tank" << i << std::setw(15) << std::setfill(filler) << tanks.at(i).team;
+
+		if(i % 2 == 0)
+			ss << "\t\t" << std::left << std::setw(10) << std::setfill(filler) << tempSS.str() << std::left << std::setw(10) << std::setfill(filler) << filler << "|";
+		else
+			ss << "\t\t\t" << tempSS.str() << std::endl;
+
+		tempSS.clear();
+>>>>>>> origin/master
 	}
 
 	tempString = ss.str();
 
 	scoreUI->appendText(tempString);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 }

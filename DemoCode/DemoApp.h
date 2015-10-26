@@ -118,9 +118,12 @@ class DemoApp : public BaseApplication
 		//AI Variables
 		int playerControlled, prevPlayerControlled; //-1 = AI, 0+ = tank ID
 
+<<<<<<< HEAD
 		int namesAllocated; //what name to give out next
 		std::string nameList[10]; //list of names for tanks
 
+=======
+>>>>>>> origin/master
 		//Collectible Class
 		class Collectible
 		{
@@ -135,11 +138,19 @@ class DemoApp : public BaseApplication
 				float timeTillSpawn;
 				int collectibleType; //3 = hp, 4 = trophy
 		};
+<<<<<<< HEAD
 
 		int visibleCollectibles;
 
 		std::vector<Collectible> collectibles;
 
+=======
+
+		int visibleCollectibles;
+
+		std::vector<Collectible> collectibles;
+
+>>>>>>> origin/master
 		//Tank Class
 		class tank 
 		{
@@ -152,7 +163,10 @@ class DemoApp : public BaseApplication
 				bool selected;
 				int currentState; //AI state
 				int score; //how many points obtained
+<<<<<<< HEAD
 				std::string name;
+=======
+>>>>>>> origin/master
 
 				Ogre::ManualObject* path2;
 				Ogre::SceneNode* tankNode;

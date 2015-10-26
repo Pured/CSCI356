@@ -173,8 +173,12 @@ void DemoApp::createTank(int i)
 		std::string mesh;
 		std::string mat;
 		double size;
+<<<<<<< HEAD
 
 		if(tmp.team == 1) //change mesh/material depending on team (challenger vs leopard)
+=======
+		if(tmp.team==1) //change mesh/material depending on team (challenger vs leopard)
+>>>>>>> origin/master
 		{
 			mesh = "ch";
 			mat = "ch_";
