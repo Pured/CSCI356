@@ -44,12 +44,14 @@ DemoApp::DemoApp(void)
 	freopen("CONOUT$", "w", stderr);
 
 	once = false;
+	soundEngine = irrklang::createIrrKlangDevice();
 }
 //-------------------------------------------------------------------------------------
 DemoApp::~DemoApp(void)
 {
 	if (pathFindingGraph)
 		delete pathFindingGraph;
+	soundEngine->drop(); // delete engine
 }
 //-------------------------------------------------------------------------------------
 bool DemoApp::setup(void)
@@ -101,6 +103,8 @@ void DemoApp::createScene(void)
 
 	mWindow->setFullscreen(false,1280,720);
 	mWindow->reposition(150, 50);
+
+	soundEngine->play2D("./Sound/tankEngine.mp3", true);
 }
 //-------------------------------------------------------------------------------------
 bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
@@ -166,7 +170,27 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 bool DemoApp::keyPressed( const OIS::KeyEvent &arg )
 {
 	keyInput(arg);
+	if(playerControlled != -1)//there is a PC tank
+	{
+		switch(arg.key)
+		{
+			case OIS::KC_LEFT:
+					tanks.at(playerControlled).mTurretRotate += 0.5f;
+				break;
+ 
+			case OIS::KC_RIGHT:
+					tanks.at(playerControlled).mTurretRotate -= 0.5f;
+				break;
 
+			case OIS::KC_UP:
+					tanks.at(playerControlled).mBarrelRotate += 0.5f;
+				break;
+ 
+			case OIS::KC_DOWN:
+					tanks.at(playerControlled).mBarrelRotate -= 0.5f;
+				break;
+		}
+	}
 	return true;
 }
 //-------------------------------------------------------------------------------------
@@ -179,6 +203,27 @@ bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 		case::OIS::KC_LCONTROL:
 			controlPressed = false;
 		break;
+	}
+	if(playerControlled != -1)
+	{
+		switch (arg.key)
+		{
+			case OIS::KC_LEFT:
+					tanks.at(playerControlled).mTurretRotate -= 0.5f;
+				break;
+ 
+			case OIS::KC_RIGHT:
+					tanks.at(playerControlled).mTurretRotate += 0.5f;
+				break;
+
+			case OIS::KC_UP:
+					tanks.at(playerControlled).mBarrelRotate -= 0.5f;
+				break;
+ 
+			case OIS::KC_DOWN:
+					tanks.at(playerControlled).mBarrelRotate += 0.5f;
+				break;
+		}
 	}
 	return true;
 }
@@ -211,7 +256,7 @@ bool DemoApp::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 		case OIS::MB_Left:
 
 			// shoot();
-
+			
 		break;
 	}
 
@@ -243,6 +288,7 @@ void DemoApp::createPath(Ogre::ManualObject* line, float height, std::vector<int
 //-------------------------------------------------------------------------------------
 void DemoApp::shoot()
 {
+	soundEngine->play2D("./Sound/explosion.wav");
 	// The btVector3 'shotOrgin' is assumed to be the location of the tank shooting the gun
 
 	int i = 0;

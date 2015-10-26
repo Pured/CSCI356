@@ -6,7 +6,9 @@
 #include "PathFinding.h"
 #include<math.h>
 #include "PhysicsEngine.h"
-#include<vector>;
+#include<vector>
+#include <irrKlang.h>
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 #define M_PI           3.14159265358979323846  /* pi */
 //#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
 
@@ -157,6 +159,11 @@ class DemoApp : public BaseApplication
 				int score; //how many points obtained
 				std::string name;
 
+				//Player Controlled tank aiming
+				float mTurretRotate;
+				float mBarrelRotate;
+				float mBarrelPitch;
+
 				Ogre::ManualObject* path2;
 				Ogre::SceneNode* tankNode;
 				Ogre::SceneNode* turretNode;
@@ -184,6 +191,9 @@ class DemoApp : public BaseApplication
 					team=-1;
 					health=-1;
 					enemy = NULL;
+					mTurretRotate = 0;
+					mBarrelRotate = 0;
+					mBarrelPitch = 0;
 				}
 		};
 
@@ -237,6 +247,8 @@ class DemoApp : public BaseApplication
 		void playerControlsQueued();
 
 		bool once;
+
+		irrklang::ISoundEngine* soundEngine;
 };
  
 #endif // #ifndef __DemoApp_h_

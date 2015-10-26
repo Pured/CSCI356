@@ -113,7 +113,7 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				//tank shooting code
 
 				break;
-			case OIS::KC_PGUP: //spawn another tank
+			case OIS::KC_EQUALS: //spawn another tank
 				if(TANK_LIMIT < 10 && mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->isVisible() == false) //hard limit of tanks allowed
 				{
 					TANK_LIMIT++; //increases the amount of tanks in the program
@@ -124,7 +124,7 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				}
 
 				break;
-			case OIS::KC_PGDOWN: //destroy the last tank
+			case OIS::KC_MINUS: //destroy the last tank
 				if (TANK_LIMIT>0)
 				{
 					destroyTank(TANK_LIMIT - 1);
@@ -174,7 +174,7 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				break;
 			case OIS::KC_ESCAPE: //exit program
 				mShutDown = true;
-
+		
 				break;
 			default:
 				break;
