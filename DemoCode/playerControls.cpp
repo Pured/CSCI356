@@ -2,7 +2,7 @@
 #include "DemoApp.h"
 void DemoApp::playerControlsQueued()
 {
-	if((playerControlled != -1) && (cMode != 1))
+	if((playerControlled != -1))
 	{
 		Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 		Ogre::RaySceneQuery * mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
@@ -21,7 +21,6 @@ void DemoApp::playerControlsQueued()
 			Ogre::Vector3 localY = tanks.at(playerControlled).turretNode->getOrientation() * Ogre::Vector3::UNIT_Y;
 			Ogre::Quaternion quat = localY.getRotationTo(Ogre::Vector3::UNIT_Y);                        
 			tanks.at(playerControlled).turretNode->rotate(quat, Ogre::Node::TS_PARENT);
-			tanks.at(playerControlled).turretNode->yaw(Ogre::Radian(-90));
 
 			/*Ogre::Vector3 mDestination = mouseRay.getPoint(itr->distance); // mDestination is the next location
 			Ogre::Vector3 mDirection = mDestination - tanks.at(playerControlled).turretNode->getPosition();     // B-A = A->B (see vector questions above)

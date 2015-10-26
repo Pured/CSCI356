@@ -5,11 +5,7 @@ void DemoApp::think(tank t)
 {
 	if(t.currentState == -1) //if idle, decide what to do
 	{
-		if(t.team == 1 && t.startNode <= t.startNode % 40 + 5) //if maze is unsolved
-			changeState(0, t); //solve the maze
-		else if(t.team == 2 && t.startNode >= t.startNode % 40 + 36) //if maze is unsolved
-			changeState(0, t); //solve the maze
-		else if(isEnemyVisible(t) == true) //look for enemy in range
+		if(isEnemyVisible(t) == true) //look for enemy in range
 			changeState(2, t); //attack enemy
 		else if(visibleCollectibles > 0 /*&& distance < ???*/) //look for collectibles
 			changeState(4, t); //pick up power-up
@@ -64,16 +60,10 @@ void DemoApp::changeState(int x, tank t)
 {
 	switch(x)
 	{
-		case 0: //solve maze
-			t.currentState = 0;
-			
-			//solve the maze and go into the battlefield
-
-			break;
 		case 1: //move
 			t.currentState = 1;
 
-			//move to a random location in the battlefield
+			generatePath(); //find a random place for the tanks to go to
 
 			break;
 		case 2: //attack
@@ -143,7 +133,7 @@ void DemoApp::collectCollectible(tank t)
 		}
 	}
 
-	for(int j = 0; j < 1024; j++)
+	for(int j = 0; j < GRID_DIMENSION; j++)
 	{
 		if(pathFindingGraph->getContent(j) == 2)
 			pathFindingGraph->setContent(j, 0);
@@ -197,4 +187,6 @@ void DemoApp::collectCollectible(tank t)
 			pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()), 2);
 		}
 	}
+
+	//void collectibleCollected(collectible); //hide the collectible
 }

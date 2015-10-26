@@ -1,0 +1,15 @@
+material HPBALL
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+
+         texture_unit
+         {
+            texture hpTexture.jpg
+         }
+      }
+   }
+}

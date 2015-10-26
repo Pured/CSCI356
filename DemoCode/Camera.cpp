@@ -1,33 +1,29 @@
 #include"stdafx.h"
 #include "DemoApp.h"
+
 void DemoApp::camMovement( const OIS::MouseEvent &arg )
 {
-	//Rotation and movement variables
-	if(cMode==0)
-	{
-		if(mMouse->getMouseState().X.abs > vp->getActualWidth()-50 )
-			camX+=0.1;
-		else if(mMouse->getMouseState().X.abs < 50 )
-			camX-=0.1;
-		else
-			camX=0;
+	if(mMouse->getMouseState().X.abs > vp->getActualWidth()-50 )
+		camX+=0.1;
+	else if(mMouse->getMouseState().X.abs < 50 )
+		camX-=0.1;
+	else
+		camX=0;
 
-		if(mMouse->getMouseState().Y.abs > vp->getActualHeight()-50 )
-			camY+=0.1;
-		else if(mMouse->getMouseState().Y.abs < 50 )
-			camY-=0.1;
-		else
-			camY=0;
-	}
-	else if(cMode==1)
-	{
-		mRotationY = Ogre::Degree(-mMouse->getMouseState().Y.rel * 0.13);
-	}
-	camZ = arg.state.Z.rel*-0.05;
+	if(mMouse->getMouseState().Y.abs > vp->getActualHeight()-50 )
+		camY+=0.1;
+	else if(mMouse->getMouseState().Y.abs < 50 )
+		camY-=0.1;
+	else
+		camY=0;
+
+	camZ = arg.state.Z.rel * -0.05;
 }
+
 bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
-	if (mTrayMgr->injectMouseUp(arg, id)) return true;
+	if (mTrayMgr->injectMouseUp(arg, id))
+		return true;
 
 	switch (id)
 	{
@@ -58,10 +54,11 @@ bool DemoApp::camMouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID i
 
 	return true;
 }
+
 bool DemoApp::quickSelect()
 {
 	// Create RaySceneQuery
-	Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
+	Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width, static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
 	Ogre::RaySceneQuery * mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
 
@@ -116,9 +113,10 @@ bool DemoApp::quickSelect()
 	}
 	return false;
 }
+
 void DemoApp::generatePath()
 {
-	for(int j = 0; j < 1024; j++)
+	for(int j = 0; j < TOTAL_NODES; j++)
 	{
 		if(pathFindingGraph->getContent(j) == 2)
 			pathFindingGraph->setContent(j, 0);
@@ -133,57 +131,94 @@ void DemoApp::generatePath()
 			tanks.at(i).mCurrentState = 0;
 			tanks.at(i).path2->clear();
 		}
-		else if(tanks.at(i).selected == true) //if no path yet
-		{
-			// Create RaySceneQuery
-			Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
-
-			Ogre::RaySceneQuery * mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
-
-			//set ray
-			mRaySceneQuery->setRay(mouseRay);
-
-			// Ray-cast and get first hit
-			Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
-			Ogre::RaySceneQueryResult::iterator itr = result.begin();
-
-			// if hit an object
-			if((itr != result.end()))
+			if(playerControlled == i) //player-controlled tank movement
 			{
-				//Get hit location
-				Ogre::Vector3 location = mouseRay.getPoint(itr->distance);
+				// Create RaySceneQuery
+				Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width, static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
-				// if hit the floor
-				if((location.y < 0.001 && (selectionMode==1 || selectionMode==2)) || selectionMode==0)
+				Ogre::RaySceneQuery *mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
+
+				//set ray
+				mRaySceneQuery->setRay(mouseRay);
+
+				// Ray-cast and get first hit
+				Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
+				Ogre::RaySceneQueryResult::iterator itr = result.begin();
+
+				// if hit an object
+				if((itr != result.end()))
 				{
-					tanks.at(i).startNode = pathFindingGraph->getNode(tanks.at(i).tankNode->_getDerivedPosition());
-					// set goal node
-					if(selectionMode==0)
+					//Get hit location
+					Ogre::Vector3 location = mouseRay.getPoint(itr->distance);
+
+					// if hit the floor
+					if((location.y < 0.001 && (selectionMode==1 || selectionMode==2)) || selectionMode==0)
 					{
-						do
+						tanks.at(i).startNode = pathFindingGraph->getNode(tanks.at(i).tankNode->_getDerivedPosition());
+						// set goal node
+						if(selectionMode==0)
 						{
-							tanks.at(i).goalNode = (int)rand() % 256;
-						}while(pathFindingGraph->getContent(tanks.at(i).goalNode) != 0);
-					}
-					else
-					{
-						tanks.at(i).goalNode=pathFindingGraph->getNode(location);
-					}
-					// check that goal node is not the same as start node
-					if(tanks.at(i).goalNode != tanks.at(i).startNode)
-					{
-						findPath(i);
-					}
-					else
-					{
-						resetPath(i);
+							do
+							{
+								tanks.at(i).goalNode = (int)rand() % 256;
+							}while(pathFindingGraph->getContent(tanks.at(i).goalNode) != 0);
+						}
+						else
+						{
+							tanks.at(i).goalNode=pathFindingGraph->getNode(location);
+						}
+						// check that goal node is not the same as start node
+						if(tanks.at(i).goalNode != tanks.at(i).startNode)
+						{
+							findPath(i);
+						}
+						else
+						{
+							resetPath(i);
+						}
 					}
 				}
 			}
-		}
-		pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
+			else //AI-controlled tank movement
+			{
+				Ogre::Vector3 location; //pre-define location for the if else
+
+				if(tanks.at(i).team == 1)
+					location = pathFindingGraph->getPosition((13 + rand() % 16) + rand() % (40 + 1)); //get a random position to move to
+				else if(tanks.at(i).team == 2)
+					location = pathFindingGraph->getPosition((13 + rand() % 16) * ((rand() % 40 + 1) * 42)); //get a random position to move to
+
+				tanks.at(i).startNode = pathFindingGraph->getNode(tanks.at(i).tankNode->_getDerivedPosition());
+				/*
+				// set goal node
+				if(selectionMode==0)
+				{*/
+				do
+				{
+					tanks.at(i).goalNode = (int)rand() % 256;
+				}while(pathFindingGraph->getContent(tanks.at(i).goalNode) != 0);
+				/*}
+				else
+				{
+					tanks.at(i).goalNode = pathFindingGraph->getNode(location);
+				}*/
+
+				// check that goal node is not the same as start node
+				if(tanks.at(i).goalNode != tanks.at(i).startNode)
+				{
+					findPath(i);
+				}
+				else
+				{
+					resetPath(i);
+				}
+				
+			}
+
+			pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->_getDerivedPosition()), 2);
 	}
 }
+
 void DemoApp::camPressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
 	switch (id)
@@ -200,6 +235,7 @@ void DemoApp::camPressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 			break;
 	}
 }
+
 bool DemoApp::WithinBounds(Ogre::Vector3 current, Ogre::Vector3 goal)
 {
 	if(current.x < goal.x+0.1 && current.x > goal.x-0.1 && current.z < goal.z+0.1 && current.z > goal.z-0.1)
@@ -311,44 +347,25 @@ void DemoApp::frameRenderingCamera()
 {
 	Ogre::Vector3 camPos;
 
-	if(mousePressedVar==true && boxTimeout>=6 && selectionMode!=2)
+	if(mousePressedVar == true && boxTimeout >= 6 && selectionMode!=2)
 	{
 		mSelecting = true;
 		selectionBox();
 	}
-	else if(mousePressedVar==true )
+	else if(mousePressedVar == true )
 	{
 		boxTimeout++;
 	}
 	
+	Ogre::Vector3 height=camNode->getPosition();
+	camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_X)  * camX);
+	camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_Z)  * camY);
+	camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Z)  * -camZ);
+	camPos=camNode->getPosition();
+		
+	camNode->setPosition(camPos.x, height.y, camPos.z);
 
-	if(cMode==0)
-	{
-		Ogre::Vector3 height=camNode->getPosition();
-		camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_X)  * camX);
-		camNode->translate((camNode->getOrientation()*Ogre::Vector3::UNIT_Z)  * camY);
-		camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Z)  * -camZ);
-		camPos=camNode->getPosition();
-		if(camZ==0)
-			camNode->setPosition(camPos.x,height.y,camPos.z);
-	}
-	else if(cMode==1)
-	{
-			
-		camNode->translate((camNode->getOrientation()*Ogre::Vector3::NEGATIVE_UNIT_Z)  * -camZ);
-
-		camNode->yaw(mRotationX);
-		camNode->pitch(mRotationY);
-		camPos=camNode->getPosition();
-		mCamera->setOrientation(Ogre::Quaternion());		
-	}
-	if(cMode==1)
-	{
-		camX=0;
-		camY=0;	
-	}
 	camZ=0;
 	mRotationX=0;
 	mRotationY=0;
-
 }

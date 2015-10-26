@@ -13,8 +13,11 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 			if(tanks.at(i).currentNode+1 != tanks.at(i).tankPath.size())
 			{
 				//printf("TANK %i : next node %i \n",i, pathFindingGraph->getContent(tanks.at(i).currentNode+1));
+				//printf("tank moving before wait %i \n", i);
+				//printf("Current Node: %i \n", tanks.at(i).currentNode + 1);
 				if( pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1))!=2)
 				{
+					
 					
 					if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size());
 						goal=pathFindingGraph->getPosition(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1));
@@ -42,6 +45,7 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 							tanks.at(i).orientDest=tanks.at(i).tankNode->_getDerivedOrientation();
 							tanks.at(i).tankNode->setOrientation(orig);
 						}
+
 						tanks.at(i).tankNode->translate(tanks.at(i).tankNode->getOrientation().xAxis() * 0.2);
 						//printf("Moving \n");
 					}
@@ -62,7 +66,6 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 						Ogre::Quaternion delta = Ogre::Quaternion::nlerp(tanks.at(i).mRotProgress*evt.timeSinceLastFrame, tanks.at(i).tankNode->getOrientation(), tanks.at(i).orientDest, true);
 						tanks.at(i).tankNode->setOrientation(delta);
 						tanks.at(i).tankNode->roll(tanks.at(i).originalRoll);
-					
 					}
 
 					if(WithinBounds(current,goal))
@@ -72,21 +75,12 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 							tanks.at(i).currentNode++;
 							tanks.at(i).mRotProgress=0;
 							tanks.at(i).firstTime=true;
-							
-							/*for(int j=0;j<1024;j++)
-							{
-								printf("%i,",pathFindingGraph->getContent(j));
-								if((j+1)%32==0 && j!=0)
-									printf("\n");
-							}
-							printf("\n");
-							printf("\n");*/
 					}
 				}
 			}
 			else
 			{
-				//pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
+				//pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()), 2);
 				resetPath(i);
 			}
 		}
@@ -151,8 +145,8 @@ void DemoApp::resetPath(int i)
 void DemoApp::createTank(int i)
 {
 		tank tmp;
-		
-		tmp.path2 = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
+		tmp.name = nameList[namesAllocated];
+		tmp.path2 = mSceneMgr->createManualObject("AStarPath"+ tmp.name);
 		tmp.path2->clear();
 		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(tmp.path2);
 
@@ -165,20 +159,17 @@ void DemoApp::createTank(int i)
 			tmp.team = 2;
 		}
 
-		tmp.name = nameList[namesAllocated]; //give the tank a name
+		 //give the tank a name
 		namesAllocated++; //point to the next name
 
 		/*Tank Stuff*/
 		std::string entityName = "Tank"+std::to_string(i);
+
 		std::string mesh;
 		std::string mat;
 		double size;
-<<<<<<< HEAD
 
 		if(tmp.team == 1) //change mesh/material depending on team (challenger vs leopard)
-=======
-		if(tmp.team==1) //change mesh/material depending on team (challenger vs leopard)
->>>>>>> origin/master
 		{
 			mesh = "ch";
 			mat = "ch_";
@@ -192,15 +183,15 @@ void DemoApp::createTank(int i)
 		}
 
 		// Create tank body entity
-		Ogre::Entity* tankBody = mSceneMgr->createEntity(entityName, mesh+"body.mesh");
+		Ogre::Entity* tankBody = mSceneMgr->createEntity(tmp.name, mesh+"body.mesh");
 		tankBody->setMaterialName(mat+"tank_material");
 
 		// Create tank turret entity
-		Ogre::Entity* tankTurret = mSceneMgr->createEntity(entityName+"Turret", mesh+"turret.mesh");
+		Ogre::Entity* tankTurret = mSceneMgr->createEntity(tmp.name +"Turret", mesh+"turret.mesh");
 		tankTurret->setMaterialName(mat+"tank_material");
 
 		// Create tank barrel entity
-		Ogre::Entity* tankBarrel = mSceneMgr->createEntity(entityName+"Barrel", mesh+"barrel.mesh");
+		Ogre::Entity* tankBarrel = mSceneMgr->createEntity(tmp.name +"Barrel", mesh+"barrel.mesh");
 		tankBarrel->setMaterialName(mat+"tank_material");
 
 		// Attach tank body to scene node
@@ -277,4 +268,25 @@ void DemoApp::respawnTank(int i)
 	pathFindingGraph->setContent(node, 2);
 	tanks.at(i).tankNode->setPosition(position);	
 	tanks.at(i).health = 100;
+}
+void DemoApp::destroyTank(int i)
+{
+	printf("In destroy \n");
+	tanks.at(i).barrelNode->detachAllObjects();
+	tanks.at(i).tankNode->detachAllObjects();
+	tanks.at(i).turretNode->detachAllObjects();
+	//
+	printf("After detach \n");
+	mSceneMgr->destroyEntity(tanks.at(i).name + "Barrel");
+	printf("After barrel \n");
+	mSceneMgr->destroyEntity(tanks.at(i).name + "Turret");
+	printf("After turret \n");
+	mSceneMgr->destroyEntity(tanks.at(i).name);
+	printf("After body \n");
+	tanks.at(i).mHealthBar->detachFromParent();
+	tanks.at(i).mSelectionCircle->detachFromParent();
+	mSceneMgr->destroyManualObject(tanks.at(i).path2);
+	mSceneMgr->destroyBillboardSet(tanks.at(i).mHealthBar);
+	mSceneMgr->destroyBillboardSet(tanks.at(i).mSelectionCircle);
+	tanks.erase(tanks.begin() + i);
 }

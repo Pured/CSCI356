@@ -6,7 +6,6 @@ DemoApp::DemoApp(void)
 	camX = 0;
 	camY = 0;
 	camZ = 45;
-	cMode = 0;
 	lookAtDest = (0, 0, 0);
 	srand(time(NULL));
 	selectionMode = 1;
@@ -22,7 +21,6 @@ DemoApp::DemoApp(void)
 	controlsWasOpen = true;
 	chatWasOpen = false;
 
-<<<<<<< HEAD
 	TANK_LIMIT = 4;
 
 	namesAllocated = 0;
@@ -38,8 +36,6 @@ DemoApp::DemoApp(void)
 	nameList[8] = "JARV";
 	nameList[9] = "VLAD";
 
-=======
->>>>>>> origin/master
 	visibleCollectibles = NUMCOLLECTIBLES;
 
 	AllocConsole();
@@ -80,12 +76,11 @@ bool DemoApp::setup(void)
 //-------------------------------------------------------------------------------------
 void DemoApp::createScene(void)
 {
-	mCamera->setOrientation(Ogre::Quaternion());
-	camNode=mSceneMgr->getRootSceneNode()->createChildSceneNode("Camera");
-	camNode->setOrientation(Ogre::Quaternion());
-	camNode->setPosition(Ogre::Vector3(0, 10, -10));
-	camNode->lookAt(Ogre::Vector3(0, 10, 0),Ogre::Node::TS_PARENT,Ogre::Vector3::UNIT_Z);
+	//set the camera
+	mCamera->setPosition(Ogre::Vector3(0, 100, 300));
+	mCamera->lookAt(Ogre::Vector3(0, -10, 200));
 
+	camNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode", Ogre::Vector3(0, 200, 0));
 	camNode->attachObject(mCamera);
 
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.25, 0.25, 0.25));
@@ -97,7 +92,8 @@ void DemoApp::createScene(void)
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue::White);
  
-	mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8); //sky dome
+	//mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8); //sky dome
+	mSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
 
 	mapSetup();
 
@@ -139,6 +135,15 @@ bool DemoApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		}
 	}
 
+	for(int i = 0; i < 3; i++)
+	{
+		collectibles[i].timeTillSpawn -= evt.timeSinceLastFrame; //decrease the time until the collectibles are able to respawn
+
+		if(collectibles[i].isVisible == false) //if the collectible was already picked up
+			if(collectibles[i].timeTillSpawn <= 0) //allowed to respawn
+				spawnCollectible(collectibles[i]); //respawn the collectible
+	}
+
 	for(int i = 0; i < tanks.size(); i++) //loop through all tanks
 		if(i != playerControlled) //if the tank isn't player-controlled
 			think(tanks.at(i)); //run AI for tank
@@ -169,12 +174,6 @@ bool DemoApp::keyReleased( const OIS::KeyEvent &arg )
 
 	switch (arg.key)
 	{
-		case OIS::KC_LMENU: 
-			cMode = 0;
-			lookAtDest = (0, 0, 0);
-			mTrayMgr->showCursor();
-		break;
-
 		case::OIS::KC_LCONTROL:
 			controlPressed = false;
 		break;

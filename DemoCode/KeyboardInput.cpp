@@ -60,30 +60,15 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				}
 
 				break;
-			/*case OIS::KC_F:
-				if(selectionMode==0)
-					selectionMode++;
-				else if(selectionMode==1)
-				{
-					follower.tankNode->setVisible(true);
-					selectionMode++;
-				}
-				else if(selectionMode==2)
-				{
-					follower.tankNode->setVisible(false);
-					selectionMode=1;
-				}
-
-				break;*/
 			case OIS::KC_H: //show/hide hp bars
 				//show/hide hp bars
 
 				break;
 			case OIS::KC_P: //print map to console
-				for(int j=0;j<1024;j++)
+				for(int j=0;j<TOTAL_NODES;j++)
 				{
 					printf("%i,",pathFindingGraph->getContent(j));
-					if((j+1)%32==0 && j!=0)
+					if((j+1)% GRID_DIMENSION ==0 && j!=0)
 						printf("\n");
 				}
 				printf("\n");
@@ -128,7 +113,7 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				//tank shooting code
 
 				break;
-			case OIS::KC_UP: //spawn another tank
+			case OIS::KC_PGUP: //spawn another tank
 				if(TANK_LIMIT < 10 && mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->isVisible() == false) //hard limit of tanks allowed
 				{
 					TANK_LIMIT++; //increases the amount of tanks in the program
@@ -139,7 +124,14 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				}
 
 				break;
-			case OIS::KC_DOWN: //destroy the last tank
+			case OIS::KC_PGDOWN: //destroy the last tank
+				if (TANK_LIMIT>0)
+				{
+					destroyTank(TANK_LIMIT - 1);
+					printf("After destroy \n");
+					TANK_LIMIT--;
+					namesAllocated--;
+				}
 				/*
 				TANK_LIMIT--; //decreases the amount of tanks in the program
 				namesAllocated--; //frees up the name of the tank being deleted
@@ -173,15 +165,6 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				//drain tank's nitros bar
 
 				break;*/
-			case OIS::KC_LCONTROL:
-				controlPressed = true;
-
-				break;
-			case OIS::KC_LMENU:
-				cMode=1;
-				mTrayMgr->hideCursor();
-
-				break;
 			case OIS::KC_RETURN: //open chatbox
 				if(mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->isVisible() == false)
 				{
@@ -213,7 +196,147 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				chatWasOpen = true;
 			}
 
-			chatBox->appendText(std::to_string(arg.key));
+			char temp = getInputChar(arg);
+			std::stringstream ss;
+			std::string s;
+
+			ss << temp;
+
+			Ogre::DisplayString tempChar = ss.str();//std::to_string((temp)); //stores a char
+
+			if(tempChar != "`"); //an invalid key was pressed
+				chatBox->appendText(tempChar); //put the char pressed into the chatbox
 		}
 	}
+}
+
+char DemoApp::getInputChar(const OIS::KeyEvent &arg)
+{
+	char c = '`';
+
+	switch(arg.key)
+	{
+		case OIS::KC_0:
+			c = '0';
+			break;
+		case OIS::KC_1:
+			c = '1';
+			break;
+		case OIS::KC_2:
+			c = '2';
+			break;
+		case OIS::KC_3:
+			c = '3';
+			break;
+		case OIS::KC_4:
+			c = '4';
+			break;
+		case OIS::KC_5:
+			c = '5';
+			break;
+		case OIS::KC_6:
+			c = '6';
+			break;
+		case OIS::KC_7:
+			c = '7';
+			break;
+		case OIS::KC_8:
+			c = '8';
+			break;
+		case OIS::KC_9:
+			c = '9';
+			break;
+		case OIS::KC_A:
+			c = 'a';
+			break;
+		case OIS::KC_B:
+			c = 'b';
+			break;
+		case OIS::KC_C:
+			c = 'c';
+			break;
+		case OIS::KC_D:
+			c = 'd';
+			break;
+		case OIS::KC_E:
+			c = 'e';
+			break;
+		case OIS::KC_F:
+			c = 'f';
+			break;
+		case OIS::KC_G:
+			c = 'g';
+			break;
+		case OIS::KC_H:
+			c = 'h';
+			break;
+		case OIS::KC_I:
+			c = 'i';
+			break;
+		case OIS::KC_J:
+			c = 'j';
+			break;
+		case OIS::KC_K:
+			c = 'k';
+			break;
+		case OIS::KC_L:
+			c = 'l';
+			break;
+		case OIS::KC_M:
+			c = 'm';
+			break;
+		case OIS::KC_N:
+			c = 'n';
+			break;
+		case OIS::KC_O:
+			c = 'o';
+			break;
+		case OIS::KC_P:
+			c = 'p';
+			break;
+		case OIS::KC_Q:
+			c = 'q';
+			break;
+		case OIS::KC_R:
+			c = 'r';
+			break;
+		case OIS::KC_S:
+			c = 's';
+			break;
+		case OIS::KC_T:
+			c = 't';
+			break;
+		case OIS::KC_U:
+			c = 'u';
+			break;
+		case OIS::KC_V:
+			c = 'v';
+			break;
+		case OIS::KC_W:
+			c = 'w';
+			break;
+		case OIS::KC_X:
+			c = 'x';
+			break;
+		case OIS::KC_Y:
+			c = 'y';
+			break;
+		case OIS::KC_Z:
+			c = 'z';
+			break;
+		case OIS::KC_SPACE:
+			c = ' ';
+			break;
+		case OIS::KC_PERIOD:
+			c = '.';
+			break;
+		case OIS::KC_COMMA:
+			c = ',';
+			break;
+		case OIS::KC_SLASH:
+			c = '?';
+			break;
+	}
+
+	return c;
 }

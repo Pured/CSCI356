@@ -274,16 +274,16 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	return true;
 }
 //-------------------------------------------------------------------------------------
-bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
+bool BaseApplication::keyPressed(const OIS::KeyEvent &arg)
 {
 	if(mTrayMgr->isDialogVisible())
 		return true; //don't process any more keys if dialog is up
  
-	if (arg.key == OIS::KC_F)   // toggle visibility of advanced frame stats
+	if(arg.key == OIS::KC_F)   // toggle visibility of advanced frame stats
 	{
 		mTrayMgr->toggleAdvancedFrameStats();
 	}
-	else if (arg.key == OIS::KC_R)   // cycle polygon rendering mode
+	else if(arg.key == OIS::KC_R)   // cycle polygon rendering mode
 	{
 		Ogre::String newVal;
 		Ogre::PolygonMode pm;
@@ -311,11 +311,11 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
 	{
 		Ogre::TextureManager::getSingleton().reloadAll();
 	}
-	else if (arg.key == OIS::KC_SYSRQ) //take a screenshot
+	else if(arg.key == OIS::KC_SYSRQ) //take a screenshot
 	{
 		mWindow->writeContentsToTimestampedFile("screenshot", ".jpg");
 	}
-	else if (arg.key == OIS::KC_ESCAPE)
+	else if(arg.key == OIS::KC_ESCAPE)
 	{
 		mShutDown = true;
 	}

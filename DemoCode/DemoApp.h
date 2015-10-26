@@ -77,7 +77,6 @@ class DemoApp : public BaseApplication
 		double camZ;
 		Ogre::Radian R;
 		Ogre::SceneNode* camNode;
-		int cMode;
 		Ogre::Vector3 lookAtDest;
 		int selectionMode;
 		Ogre::Degree mRotationX;
@@ -109,7 +108,8 @@ class DemoApp : public BaseApplication
 		bool DemoApp::quickSelect();
 
 		//Keyboard Inputs
-		void keyInput(const OIS::KeyEvent &);
+		void keyInput(const OIS::KeyEvent &arg);
+		char getInputChar(const OIS::KeyEvent &c);
 
 		//UI Variables
 		OgreBites::TextBox *controlsUI, *scoreUI, *chatBox;
@@ -118,19 +118,16 @@ class DemoApp : public BaseApplication
 		//AI Variables
 		int playerControlled, prevPlayerControlled; //-1 = AI, 0+ = tank ID
 
-<<<<<<< HEAD
 		int namesAllocated; //what name to give out next
 		std::string nameList[10]; //list of names for tanks
 
-=======
->>>>>>> origin/master
 		//Collectible Class
 		class Collectible
 		{
 			public:
-				Collectible(int nodeNumber, int contents); //sets default values
+				Collectible(int index, int type, Ogre::SceneManager *mSceneMgr, Graph *pathFindingGraph); //sets default values
 				
-				//Ogre::Entity collectibleItem;
+				Ogre::Entity *collectibleItem;
 				Ogre::SceneNode *collectibleNode;
 				Ogre::Vector3 position;
 
@@ -138,19 +135,14 @@ class DemoApp : public BaseApplication
 				float timeTillSpawn;
 				int collectibleType; //3 = hp, 4 = trophy
 		};
-<<<<<<< HEAD
 
 		int visibleCollectibles;
 
 		std::vector<Collectible> collectibles;
 
-=======
+		void collectibleCollected(Collectible collectible);
+		void spawnCollectible(Collectible collectible);
 
-		int visibleCollectibles;
-
-		std::vector<Collectible> collectibles;
-
->>>>>>> origin/master
 		//Tank Class
 		class tank 
 		{
@@ -163,10 +155,7 @@ class DemoApp : public BaseApplication
 				bool selected;
 				int currentState; //AI state
 				int score; //how many points obtained
-<<<<<<< HEAD
 				std::string name;
-=======
->>>>>>> origin/master
 
 				Ogre::ManualObject* path2;
 				Ogre::SceneNode* tankNode;
@@ -225,6 +214,7 @@ class DemoApp : public BaseApplication
 		void createPath(Ogre::ManualObject* line, float height, std::vector<int>& path, Ogre::ColourValue& colour);
 		void generatePath();
 		bool WithinRotationBounds(tank );
+		void destroyTank(int );
 
 		// AI functions
 		void think(tank t); //AI does its own things

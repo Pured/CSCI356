@@ -60,18 +60,13 @@ void DemoApp::mapSetup()
 			position.y = 2.5;
 			myNode->translate(position);
 		}
-		else if(contents == 3) //hp collectible
-		{
-			Collectible temp(nodeNumber, contents);
+	}
+
+	for(int i = 0; i < 3; i++)
+	{
+			Collectible temp(i, i % 2 + 3, mSceneMgr, pathFindingGraph);
 
 			collectibles.push_back(temp);
-		}
-		else if(contents == 4) //trophy
-		{
-			Collectible temp(nodeNumber, contents);
-
-			collectibles.push_back(temp);
-		}
 	}
 
 	for (int i = 0; i < TANK_LIMIT; i++)
