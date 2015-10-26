@@ -10,7 +10,7 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 			Ogre::Vector3 current = tanks.at(i).tankNode->_getDerivedPosition();
 			Ogre::Vector3 goal;
 	
-			if(tanks.at(i).currentNode+1 != tanks.at(i).tankPath.size())
+			if(tanks.at(i).currentNode+2 != tanks.at(i).tankPath.size())
 			{
 				//printf("TANK %i : next node %i \n",i, pathFindingGraph->getContent(tanks.at(i).currentNode+1));
 				//printf("tank moving before wait %i \n", i);
@@ -34,9 +34,13 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 					goal.y = 0.5;
 
 					//printf("TANK YAW %i : GOAL YAW %i \n",(int)tanks.at(i).tankNode->getOrientation().getYaw().valueDegrees(), (int)tanks.at(i).orientDest.getYaw().valueDegrees());
+					printf("PATH SIZE : %i CURRENT : %i \n",tanks.at(i).tankPath.size(), tanks.at(i).currentNode);
 					if(WithinRotationBounds(tanks.at(i)))
 					{
-						tanks.at(i).tankNode->setOrientation(tanks.at(i).orientDest);
+						//printf("TANKS NAME %i \n", tanks.at(i).name);
+						//printf("TANKS ORIRENT DEST %i \n", tanks.at(i).orientDest);
+						if(i<tanks.size())
+							tanks.at(i).tankNode->setOrientation(tanks.at(i).orientDest);
 					}
 					/*if(WithinRotationBounds(tanks.at(i)) && tanks.at(i).firstTime==true)
 						printf("VALID BOUNDS AND FIRST TIME \n");
@@ -96,6 +100,7 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 			else
 			{
 				//pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()), 2);
+				printf("RESET PATH \n");
 				resetPath(i);
 			}
 		}
@@ -141,7 +146,7 @@ void DemoApp::findPath(int i)
 	}
 	else
 	{
-		printf("No Path \n");
+		//printf("No Path \n");
 		pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
 		//no path so set state to no start node
 		tanks.at(i).mCurrentState = 0;
@@ -255,6 +260,7 @@ void DemoApp::createTank(int i)
 
 		tmp.originalRoll=tmp.tankNode->getOrientation().getRoll();
 		tanks.push_back(tmp);
+
 }
 void DemoApp::respawnTank(int i)
 {
