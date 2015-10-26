@@ -42,6 +42,8 @@ DemoApp::DemoApp(void)
 	freopen("CONIN$", "r", stdin);
 	freopen("CONOUT$", "w", stdout);
 	freopen("CONOUT$", "w", stderr);
+
+	once = false;
 }
 //-------------------------------------------------------------------------------------
 DemoApp::~DemoApp(void)

@@ -15,7 +15,16 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 				//printf("TANK %i : next node %i \n",i, pathFindingGraph->getContent(tanks.at(i).currentNode+1));
 				//printf("tank moving before wait %i \n", i);
 				//printf("Current Node: %i \n", tanks.at(i).currentNode + 1);
-				if( pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1))!=2)
+				
+				/*if (pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode + 1)) != 2)
+				{
+					printf("%i , %i\n", pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1)), i);
+					//printf("Found = 2 \n");
+
+					//printf("%i \n", pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode)));
+					once = true;
+				}*/
+				//if( pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1))!=2)
 				{
 					
 					
@@ -48,6 +57,7 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 
 						tanks.at(i).tankNode->translate(tanks.at(i).tankNode->getOrientation().xAxis() * 0.2);
 						//printf("Moving \n");
+						//printf("Moving \n");
 					}
 					else
 					{
@@ -66,16 +76,21 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 						Ogre::Quaternion delta = Ogre::Quaternion::nlerp(tanks.at(i).mRotProgress*evt.timeSinceLastFrame, tanks.at(i).tankNode->getOrientation(), tanks.at(i).orientDest, true);
 						tanks.at(i).tankNode->setOrientation(delta);
 						tanks.at(i).tankNode->roll(tanks.at(i).originalRoll);
+
+						//printf("rotating \n");
 					}
 
 					if(WithinBounds(current,goal))
 					{
 							pathFindingGraph->setContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode),0);
-							pathFindingGraph->setContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1),2);
+							
 							tanks.at(i).currentNode++;
+							pathFindingGraph->setContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode + 1), 2);
 							tanks.at(i).mRotProgress=0;
 							tanks.at(i).firstTime=true;
+							//printf("\n \n WITHIN BOUDS &i \n \n", i);
 					}
+					//printf("\n \ nPast withinBounds check \n \n");
 				}
 			}
 			else
@@ -126,6 +141,7 @@ void DemoApp::findPath(int i)
 	}
 	else
 	{
+		printf("No Path \n");
 		pathFindingGraph->setContent(pathFindingGraph->getNode(tanks.at(i).tankNode->getPosition()),2);
 		//no path so set state to no start node
 		tanks.at(i).mCurrentState = 0;
@@ -140,6 +156,8 @@ void DemoApp::resetPath(int i)
 
 	tanks.at(i).currentNode = -1;
 	tanks.at(i).firstTime = true;	
+
+	once = false;
 }
 
 void DemoApp::createTank(int i)

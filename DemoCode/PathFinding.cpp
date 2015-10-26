@@ -159,13 +159,13 @@ bool PathFinding::AStar(int startNode, int goalNode, Graph& pathFindingGraph, st
 		//process current node, get outgoing connections
 		clearConnections();
         pathFindingGraph.getConnections(currentNode, mConnections);
-
 		//trace all outgoing connections
         for (int counter = 0; counter < 8; counter++)
 		{
 			//check if valid connection, if not ignore
 			if(mConnections[counter].getToNode() != -1)
 			{
+
 				toNode = mConnections[counter].getToNode();
 
                 //just update node record if node is unvisited

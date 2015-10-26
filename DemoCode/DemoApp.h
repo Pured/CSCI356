@@ -235,6 +235,8 @@ class DemoApp : public BaseApplication
 
 		//Controls Functions//
 		void playerControlsQueued();
+
+		bool once;
 };
  
 #endif // #ifndef __DemoApp_h_

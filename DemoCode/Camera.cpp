@@ -181,28 +181,30 @@ void DemoApp::generatePath()
 			}
 			else //AI-controlled tank movement
 			{
-				Ogre::Vector3 location; //pre-define location for the if else
+				/*Ogre::Vector3 location; //pre-define location for the if else
 
 				if(tanks.at(i).team == 1)
 					location = pathFindingGraph->getPosition((13 + rand() % 16) + rand() % (40 + 1)); //get a random position to move to
 				else if(tanks.at(i).team == 2)
 					location = pathFindingGraph->getPosition((13 + rand() % 16) * ((rand() % 40 + 1) * 42)); //get a random position to move to
-
+				*/
+				int location = ((13 + rand() % 16) + ((rand() % 40 + 1) * 42));
 				tanks.at(i).startNode = pathFindingGraph->getNode(tanks.at(i).tankNode->_getDerivedPosition());
 				/*
 				// set goal node
 				if(selectionMode==0)
 				{*/
-				do
+				/*do
 				{
 					tanks.at(i).goalNode = (int)rand() % 256;
-				}while(pathFindingGraph->getContent(tanks.at(i).goalNode) != 0);
+				}while(pathFindingGraph->getContent(tanks.at(i).goalNode) != 0);*/
 				/*}
 				else
 				{
 					tanks.at(i).goalNode = pathFindingGraph->getNode(location);
 				}*/
-
+				tanks.at(i).goalNode = location;
+				//tanks.at(i).goalNode = pathFindingGraph->getNode(location);
 				// check that goal node is not the same as start node
 				if(tanks.at(i).goalNode != tanks.at(i).startNode)
 				{
