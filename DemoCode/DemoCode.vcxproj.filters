@@ -95,6 +95,9 @@
     <ClCompile Include="playerControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="collectibles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h">

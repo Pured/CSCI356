@@ -21,7 +21,6 @@ void DemoApp::camMovement( const OIS::MouseEvent &arg )
 	}
 	else if(cMode==1)
 	{
-		mRotationX = Ogre::Degree(-mMouse->getMouseState().X.rel * 0.13);
 		mRotationY = Ogre::Degree(-mMouse->getMouseState().Y.rel * 0.13);
 	}
 	camZ = arg.state.Z.rel*-0.05;
@@ -119,29 +118,29 @@ bool DemoApp::quickSelect()
 }
 void DemoApp::generatePath()
 {
-	for(int j=0;j<1024;j++)
+	for(int j = 0; j < 1024; j++)
 	{
-		if(pathFindingGraph->getContent(j)==2)
-			pathFindingGraph->setContent(j,0);
+		if(pathFindingGraph->getContent(j) == 2)
+			pathFindingGraph->setContent(j, 0);
 	}
-	for(int i=0;i<TANK_LIMIT;i++)
+
+	for(int i = 0; i < TANK_LIMIT; i++)
 	{
-		// if path already exists
+		//if path already exists
 		if(tanks.at(i).mCurrentState > 1)
 		{
 			// reset
 			tanks.at(i).mCurrentState = 0;
 			tanks.at(i).path2->clear();
 		}
-		// if no path yet
-		else if(tanks.at(i).selected==true)
+		else if(tanks.at(i).selected == true) //if no path yet
 		{
 			// Create RaySceneQuery
 			Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(static_cast<float>(mMouse->getMouseState().X.abs)/mMouse->getMouseState().width,		static_cast<float>(mMouse->getMouseState().Y.abs)/mMouse->getMouseState().height);
 
 			Ogre::RaySceneQuery * mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
 
-			// Set ray
+			//set ray
 			mRaySceneQuery->setRay(mouseRay);
 
 			// Ray-cast and get first hit
@@ -163,8 +162,8 @@ void DemoApp::generatePath()
 					{
 						do
 						{
-							tanks.at(i).goalNode = (int)rand()%256;
-						}while(pathFindingGraph->getContent(tanks.at(i).goalNode)!=0);
+							tanks.at(i).goalNode = (int)rand() % 256;
+						}while(pathFindingGraph->getContent(tanks.at(i).goalNode) != 0);
 					}
 					else
 					{

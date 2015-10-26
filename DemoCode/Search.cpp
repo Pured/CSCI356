@@ -3,14 +3,14 @@
 
 void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 {
-	for(int i=0; i<TANK_LIMIT;i++)
+	for(int i = 0; i < TANK_LIMIT; i++)
 	{
 		if(tanks.at(i).tankPath.size()!=0)
 		{
-			Ogre::Vector3 current=tanks.at(i).tankNode->_getDerivedPosition();
+			Ogre::Vector3 current = tanks.at(i).tankNode->_getDerivedPosition();
 			Ogre::Vector3 goal;
 	
-			if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size())
+			if(tanks.at(i).currentNode+1 != tanks.at(i).tankPath.size())
 			{
 				//printf("TANK %i : next node %i \n",i, pathFindingGraph->getContent(tanks.at(i).currentNode+1));
 				if( pathFindingGraph->getContent(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1))!=2)
@@ -18,7 +18,8 @@ void DemoApp::tankMovement(const Ogre::FrameEvent& evt)
 					
 					if(tanks.at(i).currentNode+1!=tanks.at(i).tankPath.size());
 						goal=pathFindingGraph->getPosition(tanks.at(i).tankPath.at(tanks.at(i).currentNode+1));
-					goal.y=0.5;
+
+					goal.y = 0.5;
 
 					//printf("TANK YAW %i : GOAL YAW %i \n",(int)tanks.at(i).tankNode->getOrientation().getYaw().valueDegrees(), (int)tanks.at(i).orientDest.getYaw().valueDegrees());
 					if(WithinRotationBounds(tanks.at(i)))
@@ -154,25 +155,32 @@ void DemoApp::createTank(int i)
 		tmp.path2 = mSceneMgr->createManualObject("AStarPath"+std::to_string(i));
 		tmp.path2->clear();
 		mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(tmp.path2);
-		if(i<TANK_LIMIT/2)
+
+		if(i % 2 == 0)
 		{
-			tmp.team=1;
+			tmp.team = 1;
 		}
 		else
 		{
-			tmp.team=2;
+			tmp.team = 2;
 		}
+
+		tmp.name = nameList[namesAllocated]; //give the tank a name
+		namesAllocated++; //point to the next name
+
 		/*Tank Stuff*/
 		std::string entityName = "Tank"+std::to_string(i);
 		std::string mesh;
 		std::string mat;
 		double size;
-		if(tmp.team==1)//change mesh/material depending on team (challenger vs leapard)
+
+		if(tmp.team == 1) //change mesh/material depending on team (challenger vs leopard)
 		{
 			mesh = "ch";
 			mat = "ch_";
 			size = 0.055;
-		}else
+		}
+		else
 		{
 			mesh = "lp";
 			mat = "lp_";
@@ -243,7 +251,7 @@ void DemoApp::respawnTank(int i)
 
 	do
 	{	
-		if(tanks.at(i).team==2)
+		if(tanks.at(i).team == 2)
 		{
 			//printf("%i team 2 \n",i);
 			node = ((rand() % 40 + 1)  *42) + 40; //(32-(rand() % 3+1));

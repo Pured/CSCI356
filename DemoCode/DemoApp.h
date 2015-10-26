@@ -1,17 +1,20 @@
 #ifndef __DemoApp_h_
 #define __DemoApp_h_
  
+#include"stdafx.h"
 #include "BaseApplication.h"
 #include "PathFinding.h"
 #include<math.h>
 #include "PhysicsEngine.h"
-#include"stdafx.h"
 #include<vector>;
 #define M_PI           3.14159265358979323846  /* pi */
 //#define TANK_LIMIT           4  /* The number of tanks allowed in the game */
 
 const int MAX_SHOTS = 10;
 const int SHOT_VELOCITY = 100.0f;
+const int HP_SPAWNTIME = 60;
+const int TROPHY_SPAWNTIME = 30;
+const int NUMCOLLECTIBLES = 3;
 
 class DemoApp : public BaseApplication
 {
@@ -36,6 +39,7 @@ class DemoApp : public BaseApplication
 		// UI functions
 		void createUI();
 		void toggleOtherPanels();
+		void updateScoreboard();
  
 		Ogre::Real mRotate;          // The rotate constant
 		Ogre::Real mMove;            // The movement constant
@@ -104,18 +108,39 @@ class DemoApp : public BaseApplication
 		Ogre::Vector2 DemoApp::GetScreenspaceCoords(const Ogre::Vector3& , const Ogre::Camera& );
 		bool DemoApp::quickSelect();
 
-		// Keyboard Inputs
+		//Keyboard Inputs
 		void keyInput(const OIS::KeyEvent &);
 
-		// UI Variables
+		//UI Variables
 		OgreBites::TextBox *controlsUI, *scoreUI, *chatBox;
 		bool tankInfoWasOpen, controlsWasOpen, chatWasOpen;
 
 		//AI Variables
-		//bool playerControl; //-1 = AI, 0+ = tank ID
-		int playerControlled;
+		int playerControlled, prevPlayerControlled; //-1 = AI, 0+ = tank ID
 
-		// Lab Variables
+		int namesAllocated; //what name to give out next
+		std::string nameList[10]; //list of names for tanks
+
+		//Collectible Class
+		class Collectible
+		{
+			public:
+				Collectible(int nodeNumber, int contents); //sets default values
+				
+				//Ogre::Entity collectibleItem;
+				Ogre::SceneNode *collectibleNode;
+				Ogre::Vector3 position;
+
+				bool isVisible;
+				float timeTillSpawn;
+				int collectibleType; //3 = hp, 4 = trophy
+		};
+
+		int visibleCollectibles;
+
+		std::vector<Collectible> collectibles;
+
+		//Tank Class
 		class tank 
 		{
 			public:
@@ -125,6 +150,9 @@ class DemoApp : public BaseApplication
 				int startNode;
 				int goalNode;
 				bool selected;
+				int currentState; //AI state
+				int score; //how many points obtained
+				std::string name;
 
 				Ogre::ManualObject* path2;
 				Ogre::SceneNode* tankNode;
@@ -139,8 +167,12 @@ class DemoApp : public BaseApplication
 				Ogre::BillboardSet* mSelectionCircle;
 				Ogre::Radian originalRoll;
 
+				tank *enemy;
+
 				tank()
 				{
+					score=0;
+					currentState=-1; //AI state
 					selected=false;
 					firstTime=true;
 					mRotProgress=0;
@@ -148,6 +180,7 @@ class DemoApp : public BaseApplication
 					mCurrentState=0;
 					team=-1;
 					health=-1;
+					enemy = NULL;
 				}
 		};
 
@@ -180,9 +213,15 @@ class DemoApp : public BaseApplication
 		bool WithinRotationBounds(tank );
 
 		// AI functions
-		void think(/*tank t*/); //AI does its own things
-		void shutDown(/*tank t*/); //AI stops
+		void think(tank t); //AI does its own things
+		void shutDown(tank t); //AI stops
 		void changeState(int x, tank t); //x = state to change to
+
+		bool isEnemyVisible(tank t); //check if there are any visible enemies
+		tank getVisibleEnemy(tank t); //sets t's enemy as the enemy tank found
+		void fight(tank t);
+
+		void collectCollectible(tank t);
 
 		// Selection BillBoard variables
 		//Ogre::BillboardSet* mHealthBar[TANK_LIMIT];

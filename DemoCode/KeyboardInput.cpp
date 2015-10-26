@@ -8,26 +8,40 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 		switch (arg.key)
 		{
 			case OIS::KC_A: //switch between AI and player control
-				/*if(playerControl == true)
+				if(playerControlled == -1) //if no tanks are player-controlled
 				{
-					playerControl = false;
-					think(); //turn on AI
-				}
-				else
-				{
-					playerControl = true;
-					shutDown(); //turn off AI
-				}*/
-				//Switch selected tank to player controlled (or back to AI)
-				if(playerControlled == -1)//if none controlled
-				{
-					for(int i=0;i<TANK_LIMIT;i++)//find selected tank/s
+					for(int i = 0; i < TANK_LIMIT; i++) //find selected tank
 					{
-						if(tanks.at(i).selected==true)//controll one (if multiple selected, control last of selected)
-							playerControlled = i;
+						if(tanks.at(i).selected == true) //control the tank (if multiple selected, control the last one selected)
+						{
+							playerControlled = i; //the tank being controlled
+
+							shutDown(tanks.at(playerControlled)); //turn off the tank's AI
+						}
 					}
-				}else //control none
-					playerControlled = -1;
+				}
+				else //a tank is already being controlled
+				{
+					prevPlayerControlled = playerControlled; //prevents the retoggle of the same tank
+
+					tanks.at(playerControlled).currentState = -1; //set the tank to the idle state
+
+					think(tanks.at(playerControlled)); //turn on the tank's AI
+
+					playerControlled = -1; //all tanks are AI-controlled
+
+					for(int i = 0; i < TANK_LIMIT; i++) //look for a selected tank if there is one
+					{
+						if(tanks.at(i).selected == true && prevPlayerControlled != i) //control the tank (if multiple selected, control the last one selected)
+						{
+							playerControlled = i; //the tank being controlled
+
+							shutDown(tanks.at(playerControlled)); //turn off the tank's AI
+						}
+					}
+
+					prevPlayerControlled = -1;
+				}
 
 				break;
 			case OIS::KC_C: //show/hide controls
@@ -114,9 +128,30 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				//tank shooting code
 
 				break;
+			case OIS::KC_UP: //spawn another tank
+				if(TANK_LIMIT < 10 && mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->isVisible() == false) //hard limit of tanks allowed
+				{
+					TANK_LIMIT++; //increases the amount of tanks in the program
+
+					createTank(namesAllocated); //create another tank
+
+					respawnTank(namesAllocated - 1); //spawns the tank that was just created based on its team
+				}
+
+				break;
+			case OIS::KC_DOWN: //destroy the last tank
+				/*
+				TANK_LIMIT--; //decreases the amount of tanks in the program
+				namesAllocated--; //frees up the name of the tank being deleted
+
+				tanks.pop_back();//destroy tank
+				*/
+				break;
 			case OIS::KC_TAB: //show/hide scoreboard
 				if(mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->isVisible() == false)
 				{
+					updateScoreboard(); //update the scoreboard
+
 					toggleOtherPanels();
 					mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->show();
 				}
@@ -129,7 +164,7 @@ void DemoApp::keyInput( const OIS::KeyEvent &arg )
 				break;
 			case OIS::KC_BACK: //force tank respawn
 				//kill the tank
-				//edit score
+				//edit score -1
 				//respawn tank
 
 				break;
